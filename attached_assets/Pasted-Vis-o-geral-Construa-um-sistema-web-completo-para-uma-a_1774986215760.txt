@@ -1,0 +1,258 @@
+Visão geral
+Construa um sistema web completo para uma academia. O projeto tem duas partes:
+
+Frontend: React + Vite + Tailwind CSS
+Backend: Node.js + Express + PostgreSQL (use pg para conectar)
+
+Use TypeScript em ambos. Organize em dois diretórios na raiz: /client e /server.
+
+Design & Tema
+O visual deve ser escuro, moderno e com energia de academia. Paleta base:
+
+Background principal: #0d0d0d
+Background de cards: #141414 e #1a1a1a
+Cor de destaque primária: #a3e635 (verde lima — como o Pay Now da referência)
+Texto primário: #f5f5f5
+Texto secundário: #737373
+Bordas sutis: #262626
+
+Use Tailwind com essas cores configuradas no tailwind.config.js. Fontes: Bebas Neue para títulos grandes (Google Fonts) e Inter para corpo de texto.
+
+Estrutura de rotas
+Rotas públicas
+
+/ — Landing page
+/login — Página de login
+
+Rotas privadas (requerem JWT)
+
+/dashboard — Dashboard do aluno (sidebar + conteúdo)
+/admin — Painel do professor/admin (apenas role admin ou professor)
+
+
+1. Landing Page (/)
+Topbar com:
+
+Logo da academia (texto "IRONLAB" estilizado)
+Botão "Já sou aluno" que navega para /login
+
+Seções da landing:
+
+Hero com headline grande, subtítulo e botão CTA "Quero começar"
+Seção de benefícios (3 cards)
+Seção de planos (1 plano destacado: R$ 149/mês)
+Footer simples
+
+
+2. Login (/login)
+Formulário simples com:
+
+Campo e-mail
+Campo senha
+Botão "Entrar"
+Sem cadastro público — conta é criada pelo admin
+
+Ao logar com sucesso: salva o JWT no localStorage e redireciona para /dashboard (aluno) ou /admin (admin/professor).
+
+3. Dashboard do aluno (/dashboard)
+Layout com sidebar fixa à esquerda e área de conteúdo à direita.
+Sidebar
+Itens de navegação:
+
+🏋️ Meus Treinos
+🔥 Gamificação
+💳 Financeiro
+👤 Perfil
+
+Aba: Meus Treinos
+Mostra os treinos atribuídos pelo professor (cards com nome do treino, grupos musculares, lista de exercícios com séries e repetições).
+Abaixo, seção "Meus treinos personalizados" onde o aluno pode:
+
+Adicionar um treino próprio (modal com campos: nome, exercícios, séries, reps)
+Ver e deletar treinos criados por ele
+
+Aba: Gamificação
+
+Card grande mostrando o streak atual em dias consecutivos (ex: "🔥 7 dias seguidos")
+Indicador de killstreak: se o aluno treinou hoje, mostra "Ativo". Se não, mostra "Em risco"
+Histórico visual da semana: 7 círculos representando os dias (verde = treinou, cinza = não treinou)
+Card com melhor streak histórico
+
+Aba: Financeiro
+Exatamente como a imagem de referência fornecida:
+
+Card "Current Plan" mostrando plano ativo
+Card "Next Payment" com data e aviso de vencimento
+Botão "Pay Now" que abre um modal com o QR Code Pix
+Tabela de histórico de pagamentos (data, valor, status)
+
+Aba: Perfil
+
+Foto de perfil (upload simulado)
+Nome, e-mail, telefone (editável)
+Botão "Salvar alterações"
+Botão "Sair" (limpa JWT e volta para /)
+
+
+4. Painel Admin (/admin)
+Acessível apenas para roles admin e professor.
+Seções:
+
+Alunos: lista de todos os alunos cadastrados. Botão para adicionar novo aluno (modal com nome, e-mail, senha temporária, plano). Botão para ver/editar aluno.
+Treinos: criar treinos com nome, descrição, lista de exercícios (nome, séries, reps, descanso). Atribuir treino a um ou mais alunos.
+Financeiro: lista de todos os pagamentos. Filtro por status (pago/pendente). Botão para gerar cobrança Pix para um aluno.
+Professores (apenas admin): listar e adicionar professores.
+
+
+5. Backend — Node.js + Express
+Estrutura de pastas /server
+server/
+  src/
+    routes/
+      auth.ts
+      users.ts
+      workouts.ts
+      payments.ts
+      gamification.ts
+    middlewares/
+      auth.ts        ← verifica JWT e role
+      validate.ts    ← validação de body com zod
+    db/
+      index.ts       ← pool de conexão pg
+      migrations.ts  ← criação das tabelas
+    index.ts         ← entry point
+Banco de dados — PostgreSQL
+Crie as tabelas automaticamente ao iniciar o servidor (migrations no boot):
+sql-- Usuários
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  role VARCHAR(20) NOT NULL DEFAULT 'aluno', -- 'aluno' | 'professor' | 'admin'
+  avatar_url TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Treinos (criados por professor ou pelo próprio aluno)
+CREATE TABLE IF NOT EXISTS workouts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(255) NOT NULL,
+  created_by UUID REFERENCES users(id),
+  is_custom BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Exercícios dentro de um treino
+CREATE TABLE IF NOT EXISTS exercises (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  sets INTEGER NOT NULL,
+  reps VARCHAR(50) NOT NULL,
+  rest_seconds INTEGER DEFAULT 60
+);
+
+-- Atribuição de treino a aluno
+CREATE TABLE IF NOT EXISTS workout_assignments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  workout_id UUID REFERENCES workouts(id),
+  user_id UUID REFERENCES users(id),
+  assigned_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Logs de treino (para streak)
+CREATE TABLE IF NOT EXISTS workout_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id),
+  workout_id UUID REFERENCES workouts(id),
+  completed_at DATE NOT NULL DEFAULT CURRENT_DATE
+);
+
+-- Pagamentos
+CREATE TABLE IF NOT EXISTS payments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id),
+  amount DECIMAL(10,2) NOT NULL,
+  status VARCHAR(20) DEFAULT 'pending', -- 'pending' | 'paid' | 'overdue'
+  due_date DATE NOT NULL,
+  paid_at TIMESTAMP,
+  pix_qr_code TEXT,
+  pix_copy_paste TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Planos
+CREATE TABLE IF NOT EXISTS plans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id),
+  plan_name VARCHAR(100) NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  active BOOLEAN DEFAULT true,
+  next_due_date DATE
+);
+Endpoints da API
+Auth
+
+POST /api/auth/login → retorna { token, user }
+GET /api/auth/me → retorna dados do usuário logado
+
+Users
+
+GET /api/users → lista alunos (admin/professor)
+POST /api/users → cria aluno (admin)
+PUT /api/users/:id → edita aluno
+DELETE /api/users/:id → remove aluno (admin)
+
+Workouts
+
+GET /api/workouts → treinos atribuídos ao aluno logado (ou todos se admin)
+POST /api/workouts → cria treino
+PUT /api/workouts/:id → edita treino
+DELETE /api/workouts/:id → remove treino
+POST /api/workouts/:id/assign → atribui treino a aluno(s)
+POST /api/workouts/:id/complete → registra conclusão (grava workout_log)
+
+Gamification
+
+GET /api/gamification/streak → retorna { currentStreak, maxStreak, weekDays: [bool x 7] }
+
+Payments
+
+GET /api/payments → histórico do aluno logado (ou todos se admin)
+POST /api/payments/generate → gera cobrança (mock: retorna QR Code de imagem placeholder e copia-e-cola fake)
+POST /api/payments/webhook → simula confirmação de pagamento (muda status para 'paid')
+
+Segurança obrigatória
+
+Senhas com bcrypt (salt 12)
+JWT com expiração de 8 horas
+Middleware de autenticação em todas as rotas privadas
+Middleware de role: requireRole('admin'), requireRole('professor', 'admin')
+Validação de body com Zod em todos os endpoints de escrita
+CORS configurado para aceitar apenas a origin do frontend
+
+
+6. Dados de seed
+Ao iniciar o servidor, se o banco estiver vazio, insira:
+
+1 admin: admin@ironlab.com / senha admin123
+1 professor: prof@ironlab.com / senha prof123
+2 alunos com plano ativo, histórico de 4 pagamentos pagos e streak de exemplo
+2 treinos atribuídos aos alunos com exercícios completos
+
+
+7. Variáveis de ambiente
+Crie um .env.example:
+DATABASE_URL=postgresql://user:password@localhost:5432/academia
+JWT_SECRET=sua_chave_secreta_aqui
+PORT=3001
+CLIENT_URL=http://localhost:5173
+
+Observações finais
+
+O Pix é mock por enquanto: gere um QR Code placeholder (pode usar https://api.qrserver.com/v1/create-qr-code/?data=PIX_PAYLOAD&size=200x200) e um texto fake de copia-e-cola
+Use react-router-dom para roteamento no frontend
+Use axios no frontend para chamadas à API
+Proteja as rotas privadas do React: se não tiver JWT válido, redireciona para /login
+O visual da aba Financeiro deve ser fiel à imagem de referência: dark, cards arredondados, botão verde lima, tabela limpa
