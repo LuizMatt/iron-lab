@@ -1,0 +1,41 @@
+FROM node:24-slim AS builder
+
+RUN npm install -g pnpm@10
+
+WORKDIR /app
+
+# Copy workspace manifests
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY tsconfig.base.json tsconfig.json ./
+
+# Copy ALL libs (pnpm workspace requires all packages to be present)
+COPY lib/ ./lib/
+
+# Copy ALL artifacts source (pnpm needs them for workspace resolution)
+COPY artifacts/ ./artifacts/
+
+# Copy scripts
+COPY scripts/ ./scripts/
+
+# Install dependencies (no native modules needed for frontend build)
+RUN pnpm install --frozen-lockfile
+
+# Build the Vite frontend
+# BASE_PATH=/ so assets are served from root (no sub-path prefix)
+# PORT is required by vite.config.ts validation
+ENV BASE_PATH=/
+ENV PORT=3000
+ENV NODE_ENV=production
+
+RUN pnpm --filter @workspace/ironlab run build
+
+# ---- Runtime stage (nginx) ----
+FROM nginx:alpine
+
+# Copy compiled frontend static files
+COPY --from=builder /app/artifacts/ironlab/dist/public /usr/share/nginx/html
+
+# Nginx reverse proxy config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80

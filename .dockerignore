@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+**/dist
+**/.turbo
+**/.next
+**/build
+.git
+**/*.log
+.env
+.env.local
+.env.*.local
+attached_assets
+artifacts/mockup-sandbox
+scripts

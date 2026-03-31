@@ -1,0 +1,41 @@
+FROM node:24-slim AS builder
+
+RUN npm install -g pnpm@10
+
+WORKDIR /app
+
+# Copy workspace manifests (better layer caching)
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY tsconfig.base.json tsconfig.json ./
+
+# Copy ALL libs (pnpm workspace requires all packages present)
+COPY lib/ ./lib/
+
+# Copy ALL artifacts source (pnpm workspace resolution)
+COPY artifacts/ ./artifacts/
+
+# Copy scripts
+COPY scripts/ ./scripts/
+
+# Install all dependencies (bcrypt is in onlyBuiltDependencies, compiles automatically)
+RUN pnpm install --frozen-lockfile
+
+# Build the API bundle with esbuild
+RUN pnpm --filter @workspace/api-server run build
+
+# ---- Runtime stage ----
+FROM node:24-slim
+
+WORKDIR /app
+
+# Copy node_modules — required because bcrypt is a native module externalized from the bundle
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copy compiled API bundle
+COPY --from=builder /app/artifacts/api-server/dist ./dist
+
+EXPOSE 3001
+
+ENV NODE_ENV=production
+
+CMD ["node", "--enable-source-maps", "./dist/index.mjs"]
