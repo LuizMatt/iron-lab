@@ -19,7 +19,7 @@ run = "pnpm --filter @workspace/ironlab run dev"
 
 [services.production]
 build = [ "pnpm", "--filter", "@workspace/ironlab", "run", "build" ]
-publicDir = "artifacts/ironlab/dist/public"
+publicDir = "artifacts/ironlab/.output/public"
 serve = "static"
 
 [[services.production.rewrites]]
@@ -28,4 +28,4 @@ to = "/index.html"
 
 [services.env]
 PORT = "25959"
-BASE_PATH = "/"
+NUXT_PORT = "25959"
