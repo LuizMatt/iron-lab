@@ -14,9 +14,6 @@ COPY lib/ ./lib/
 # Copy ALL artifacts source (pnpm workspace resolution)
 COPY artifacts/ ./artifacts/
 
-# Copy scripts
-COPY scripts/ ./scripts/
-
 # Install all dependencies (bcrypt is in onlyBuiltDependencies, compiles automatically)
 RUN pnpm install --frozen-lockfile
 
@@ -28,14 +25,15 @@ FROM node:24-slim
 
 WORKDIR /app
 
-# Copy node_modules — required because bcrypt is a native module externalized from the bundle
+# Copy the full node_modules tree (pnpm virtual store + hoisted packages)
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/artifacts/api-server/node_modules ./artifacts/api-server/node_modules
 
-# Copy compiled API bundle
-COPY --from=builder /app/artifacts/api-server/dist ./dist
+# Copy compiled API bundle into the same location as the source so pnpm resolution works
+COPY --from=builder /app/artifacts/api-server/dist ./artifacts/api-server/dist
 
 EXPOSE 3001
 
 ENV NODE_ENV=production
 
-CMD ["node", "--enable-source-maps", "./dist/index.mjs"]
+CMD ["node", "--enable-source-maps", "./artifacts/api-server/dist/index.mjs"]
