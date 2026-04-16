@@ -1,8 +1,0 @@
-uploads = []
-generated = []
-
-[[outputs]]
-id = "x14Yn8HYJhv3j1xzY6Lwo"
-uri = "file://API_DOCS.md"
-type = "text"
-title = "IRONLAB — Documentação da API"
