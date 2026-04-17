@@ -6,6 +6,7 @@ import workoutsRouter from "./workouts.js";
 import gamificationRouter from "./gamification.js";
 import paymentsRouter from "./payments.js";
 import plansRouter from "./plans.js";
+import sliderImagesRoutes from "./slider-images.js";
 
 const router: IRouter = Router();
 
@@ -16,5 +17,7 @@ router.use("/workouts", workoutsRouter);
 router.use("/gamification", gamificationRouter);
 router.use("/payments", paymentsRouter);
 router.use("/plans", plansRouter);
+router.use("/slider-images", sliderImagesRoutes);
 
 export default router;
+

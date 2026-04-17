@@ -65,3 +65,18 @@ CREATE TABLE IF NOT EXISTS plans (
   active BOOLEAN NOT NULL DEFAULT true,
   next_due_date VARCHAR(20)
 );
+
+CREATE TABLE slider_images (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  image_url TEXT NOT NULL,
+  mobile_image_url TEXT,
+
+  alt_text TEXT NOT NULL,
+  display_order INTEGER NOT NULL,
+
+  is_active BOOLEAN NOT NULL DEFAULT true,
+
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
