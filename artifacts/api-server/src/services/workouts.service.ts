@@ -4,9 +4,12 @@ import {
   exercisesTable,
   workoutAssignmentsTable,
   workoutLogsTable,
+  type Workout,
+  type Exercise,
 } from "@workspace/db";
-import { eq, inArray } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { AppError } from "../lib/app-error.js";
+import { badgesService } from "./badges.service.js";
 
 async function getWorkoutWithExercises(workoutId: string) {
   const [workout] = await db
@@ -14,14 +17,17 @@ async function getWorkoutWithExercises(workoutId: string) {
     .from(workoutsTable)
     .where(eq(workoutsTable.id, workoutId))
     .limit(1);
+
   if (!workout) return null;
+
   const exercises = await db
     .select()
     .from(exercisesTable)
     .where(eq(exercisesTable.workoutId, workoutId));
+
   return {
     ...workout,
-    exercises: exercises.map((e) => ({
+    exercises: exercises.map((e: Exercise) => ({
       id: e.id,
       name: e.name,
       sets: e.sets,
@@ -40,10 +46,12 @@ export const workoutsService = {
         .select()
         .from(workoutAssignmentsTable)
         .where(eq(workoutAssignmentsTable.userId, userId));
+
       const custom = await db
         .select()
         .from(workoutsTable)
         .where(eq(workoutsTable.createdBy, userId));
+
       workoutIds = [
         ...new Set([...assignments.map((a) => a.workoutId), ...custom.map((w) => w.id)]),
       ];
@@ -58,16 +66,17 @@ export const workoutsService = {
       .select()
       .from(workoutsTable)
       .where(inArray(workoutsTable.id, workoutIds));
+
     const allExercises = await db
       .select()
       .from(exercisesTable)
       .where(inArray(exercisesTable.workoutId, workoutIds));
 
-    return workouts.map((w) => ({
+    return workouts.map((w: Workout) => ({
       ...w,
       exercises: allExercises
-        .filter((e) => e.workoutId === w.id)
-        .map((e) => ({
+        .filter((e: Exercise) => e.workoutId === w.id)
+        .map((e: Exercise) => ({
           id: e.id,
           name: e.name,
           sets: e.sets,
@@ -122,9 +131,15 @@ export const workoutsService = {
   ) {
     await db
       .update(workoutsTable)
-      .set({ name: data.name, description: data.description ?? null, muscleGroups: data.muscleGroups ?? null })
+      .set({ 
+        name: data.name, 
+        description: data.description ?? null, 
+        muscleGroups: data.muscleGroups ?? null 
+      })
       .where(eq(workoutsTable.id, id));
+
     await db.delete(exercisesTable).where(eq(exercisesTable.workoutId, id));
+
     await db.insert(exercisesTable).values(
       data.exercises.map((e) => ({
         workoutId: id,
@@ -134,6 +149,7 @@ export const workoutsService = {
         restSeconds: e.restSeconds ?? 60,
       })),
     );
+
     const result = await getWorkoutWithExercises(id);
     if (!result) throw new AppError(404, "Treino não encontrado");
     return result;
@@ -150,24 +166,42 @@ export const workoutsService = {
       const existing = await db
         .select()
         .from(workoutAssignmentsTable)
-        .where(eq(workoutAssignmentsTable.workoutId, workoutId));
-      if (!existing.some((a) => a.userId === userId)) {
+        .where(
+          and(
+            eq(workoutAssignmentsTable.workoutId, workoutId),
+            eq(workoutAssignmentsTable.userId, userId)
+          )
+        );
+
+      if (existing.length === 0) {
         await db.insert(workoutAssignmentsTable).values({ workoutId, userId });
       }
     }
   },
 
   async complete(workoutId: string, userId: string) {
-    const today = new Date().toISOString().split("T")[0];
-    const existing = await db
+    // Pegamos a data e forçamos o tipo string explicitamente
+const today = (new Date().toISOString().split("T") as unknown) as string;    
+    const [alreadyLogged] = await db
       .select()
       .from(workoutLogsTable)
-      .where(eq(workoutLogsTable.userId, userId));
-    const alreadyLogged = existing.some(
-      (l) => l.workoutId === workoutId && l.completedAt === today,
-    );
+      .where(
+        and(
+          eq(workoutLogsTable.userId, userId as string),
+          eq(workoutLogsTable.workoutId, workoutId as string),
+          eq(workoutLogsTable.completedAt, today)
+        )
+      )
+      .limit(1);
+
     if (!alreadyLogged) {
-      await db.insert(workoutLogsTable).values({ userId, workoutId, completedAt: today });
+      await db.insert(workoutLogsTable).values({ 
+        userId: userId as string, 
+        workoutId: workoutId as string, 
+        completedAt: today 
+      });
+
+      await badgesService.checkAndAward(userId);
     }
   },
 };
