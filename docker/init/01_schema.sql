@@ -80,3 +80,15 @@ CREATE TABLE slider_images (
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
+CREATE TABLE IF NOT EXISTS packages (
+  id TEXT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  subtitle VARCHAR(255) NOT NULL,
+  price INTEGER NOT NULL,
+  features JSONB NOT NULL DEFAULT '[]',
+  is_featured BOOLEAN NOT NULL DEFAULT false,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  display_order INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+);
