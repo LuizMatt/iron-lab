@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { db, usersTable, workoutsTable, exercisesTable, workoutAssignmentsTable, workoutLogsTable, paymentsTable, plansTable } from "@workspace/db";
+import { db, usersTable, workoutsTable, exercisesTable, workoutAssignmentsTable, workoutLogsTable, paymentsTable, plansTable, packagesTable } from "@workspace/db";
 import { logger } from "./lib/logger.js";
 
 export async function seedIfEmpty() {
@@ -160,6 +160,36 @@ export async function seedIfEmpty() {
       pixCopyPaste: `00020126580014BR.GOV.BCB.PIX0136${pixPayload2}5204000053039865802BR5925IRONLAB ACADEMIA LTDA6009SAO PAULO62070503***6304`,
     });
   }
+
+  await db.insert(packagesTable).values([
+    {
+      name: "Básico",
+      subtitle: "Para quem está começando",
+      price: 9900,
+      features: ["Acesso à academia", "Vestiário", "Musculação"],
+      is_featured: false,
+      is_active: true,
+      display_order: 1,
+    },
+    {
+      name: "Pro",
+      subtitle: "Para quem é sério",
+      price: 19900,
+      features: ["Tudo do Básico", "Aulas em grupo", "Avaliação física mensal", "App de treinos"],
+      is_featured: true,
+      is_active: true,
+      display_order: 2,
+    },
+    {
+      name: "Elite",
+      subtitle: "Experiência completa",
+      price: 34900,
+      features: ["Tudo do Pro", "Personal trainer", "Nutricionista", "Acesso 24h", "Área VIP"],
+      is_featured: false,
+      is_active: true,
+      display_order: 3,
+    },
+  ]).catch((err) => logger.error({ err }, "Failed to seed packages"));
 
   logger.info("Database seeded successfully!");
   logger.info("Credentials: admin@ironlab.com/admin123, prof@ironlab.com/prof123, carlos@email.com/aluno123, ana@email.com/aluno123");
