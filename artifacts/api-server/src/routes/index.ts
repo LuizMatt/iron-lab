@@ -7,6 +7,7 @@ import gamificationRouter from "./gamification.js";
 import paymentsRouter from "./payments.js";
 import plansRouter from "./plans.js";
 import sliderImagesRoutes from "./slider-images.js";
+import packagesRouter from "./packages.js";
 
 const router: IRouter = Router();
 
@@ -18,6 +19,7 @@ router.use("/gamification", gamificationRouter);
 router.use("/payments", paymentsRouter);
 router.use("/plans", plansRouter);
 router.use("/slider-images", sliderImagesRoutes);
+router.use("/packages", packagesRouter);
 
 export default router;
 
