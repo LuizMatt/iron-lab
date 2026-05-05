@@ -55,3 +55,25 @@ declare interface StreakData {
   trainedToday: boolean;
   weekDays: boolean[];
 }
+
+declare interface Package {
+  id: string;
+  name: string;
+  subtitle?: string | null;
+  price: number;
+  is_featured: boolean;
+  is_active: boolean;
+  display_order: number;
+  features: string[];
+  createdAt?: string;
+}
+
+declare interface SliderImage {
+  id: string;
+  image_url: string;
+  mobile_image_url?: string | null;
+  alt_text?: string | null;
+  display_order: number;
+  is_active: boolean;
+  createdAt?: string;
+}

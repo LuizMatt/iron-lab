@@ -346,6 +346,221 @@
           </table>
         </div>
       </div>
+
+      <!-- ==================== PACOTES TAB ==================== -->
+      <div v-if="activeTab === 'pacotes'">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h1 class="font-display text-4xl text-white">PACOTES</h1>
+            <p class="text-[#737373] text-sm mt-1">{{ packages.length }} pacotes cadastrados</p>
+          </div>
+          <button
+            @click="openPackageModal()"
+            class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors"
+          >
+            <Plus class="w-4 h-4" />
+            Novo Pacote
+          </button>
+        </div>
+
+        <div v-if="loadingPackages" class="text-center py-16 text-[#737373]">
+          <Loader2 class="w-8 h-8 animate-spin mx-auto mb-4 text-[#a3e635]" />
+        </div>
+
+        <div v-else-if="packagesError" class="text-center py-16 text-red-400 text-sm">
+          {{ packagesError }}
+        </div>
+
+        <div v-else class="bg-[#141414] border border-[#262626] rounded-xl overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-[#1a1a1a]">
+              <tr>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Nome</th>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Subtítulo</th>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Preço</th>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Destaque</th>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Ativo</th>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Ordem</th>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Ações</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#262626]">
+              <tr v-if="packages.length === 0">
+                <td colspan="7" class="text-center py-10 text-[#737373] text-sm">
+                  Nenhum pacote cadastrado.
+                </td>
+              </tr>
+              <tr
+                v-for="pkg in packages"
+                :key="pkg.id"
+                class="hover:bg-[#1a1a1a] transition-colors"
+              >
+                <td class="px-6 py-4 text-sm text-[#f5f5f5] font-medium">{{ pkg.name }}</td>
+                <td class="px-6 py-4 text-sm text-[#737373] max-w-[180px] truncate">{{ pkg.subtitle || "—" }}</td>
+                <td class="px-6 py-4 text-sm text-[#f5f5f5]">
+                  R$ {{ Number(pkg.price).toFixed(2).replace(".", ",") }}
+                </td>
+                <td class="px-6 py-4">
+                  <button
+                    @click="togglePackageField(pkg, 'is_featured')"
+                    :class="[
+                      'text-xs px-2 py-1 rounded-full font-medium border transition-colors',
+                      pkg.is_featured
+                        ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20'
+                        : 'bg-[#1a1a1a] text-[#555] border-[#333] hover:border-[#555]'
+                    ]"
+                  >
+                    {{ pkg.is_featured ? "Destaque" : "Normal" }}
+                  </button>
+                </td>
+                <td class="px-6 py-4">
+                  <button
+                    @click="togglePackageField(pkg, 'is_active')"
+                    :class="[
+                      'text-xs px-2 py-1 rounded-full font-medium border transition-colors',
+                      pkg.is_active
+                        ? 'bg-[#a3e635]/10 text-[#a3e635] border-[#a3e635]/20 hover:bg-[#a3e635]/20'
+                        : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'
+                    ]"
+                  >
+                    {{ pkg.is_active ? "Ativo" : "Inativo" }}
+                  </button>
+                </td>
+                <td class="px-6 py-4 text-sm text-[#737373]">{{ pkg.display_order }}</td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-2">
+                    <button
+                      @click="openPackageModal(pkg)"
+                      class="text-xs text-[#a3e635] hover:underline"
+                    >
+                      Editar
+                    </button>
+                    <span class="text-[#333]">|</span>
+                    <button
+                      @click="deletePackage(pkg.id)"
+                      class="text-xs text-red-400 hover:underline"
+                    >
+                      Remover
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== SLIDES TAB ==================== -->
+      <div v-if="activeTab === 'slides'">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h1 class="font-display text-4xl text-white">SLIDES</h1>
+            <p class="text-[#737373] text-sm mt-1">{{ sliderImages.length }} slides cadastrados</p>
+          </div>
+          <button
+            @click="openSlideModal()"
+            class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors"
+          >
+            <Plus class="w-4 h-4" />
+            Novo Slide
+          </button>
+        </div>
+
+        <div v-if="loadingSlides" class="text-center py-16 text-[#737373]">
+          <Loader2 class="w-8 h-8 animate-spin mx-auto mb-4 text-[#a3e635]" />
+        </div>
+
+        <div v-else-if="slidesError" class="text-center py-16 text-red-400 text-sm">
+          {{ slidesError }}
+        </div>
+
+        <div v-else class="bg-[#141414] border border-[#262626] rounded-xl overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-[#1a1a1a]">
+              <tr>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Preview</th>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Alt Text</th>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Mobile</th>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Ordem</th>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Ativo</th>
+                <th class="text-left text-xs text-[#737373] uppercase tracking-wider px-6 py-3">Ações</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#262626]">
+              <tr v-if="sliderImages.length === 0">
+                <td colspan="6" class="text-center py-10 text-[#737373] text-sm">
+                  Nenhum slide cadastrado.
+                </td>
+              </tr>
+              <tr
+                v-for="slide in sliderImages"
+                :key="slide.id"
+                class="hover:bg-[#1a1a1a] transition-colors"
+              >
+                <td class="px-6 py-4">
+                  <div class="w-20 h-12 rounded-lg overflow-hidden bg-[#262626] flex items-center justify-center border border-[#333]">
+                    <img
+                      v-if="slide.image_url"
+                      :src="slide.image_url"
+                      :alt="slide.alt_text || 'slide'"
+                      class="w-full h-full object-cover"
+                      @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
+                    />
+                    <ImageIcon v-else class="w-5 h-5 text-[#555]" />
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm text-[#737373] max-w-[200px] truncate">
+                  {{ slide.alt_text || "—" }}
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    :class="[
+                      'text-xs px-2 py-1 rounded-full font-medium border',
+                      slide.mobile_image_url
+                        ? 'bg-[#a3e635]/10 text-[#a3e635] border-[#a3e635]/20'
+                        : 'bg-[#1a1a1a] text-[#555] border-[#333]'
+                    ]"
+                  >
+                    {{ slide.mobile_image_url ? "Sim" : "Não" }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-[#737373]">{{ slide.display_order }}</td>
+                <td class="px-6 py-4">
+                  <button
+                    @click="toggleSlideActive(slide)"
+                    :class="[
+                      'text-xs px-2 py-1 rounded-full font-medium border transition-colors',
+                      slide.is_active
+                        ? 'bg-[#a3e635]/10 text-[#a3e635] border-[#a3e635]/20 hover:bg-[#a3e635]/20'
+                        : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'
+                    ]"
+                  >
+                    {{ slide.is_active ? "Ativo" : "Inativo" }}
+                  </button>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-2">
+                    <button
+                      @click="openSlideModal(slide)"
+                      class="text-xs text-[#a3e635] hover:underline"
+                    >
+                      Editar
+                    </button>
+                    <span class="text-[#333]">|</span>
+                    <button
+                      @click="deleteSlide(slide.id)"
+                      class="text-xs text-red-400 hover:underline"
+                    >
+                      Remover
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </main>
 
     <!-- Student Modal -->
@@ -617,11 +832,247 @@
         </div>
       </div>
     </Teleport>
+
+    <!-- ==================== PACKAGE MODAL ==================== -->
+    <Teleport to="body">
+      <div
+        v-if="showPackageModal"
+        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+        @click.self="showPackageModal = false"
+      >
+        <div class="bg-[#141414] border border-[#262626] rounded-xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+          <h3 class="font-display text-2xl text-white mb-6">
+            {{ editingPackage ? "EDITAR PACOTE" : "NOVO PACOTE" }}
+          </h3>
+          <form @submit.prevent="savePackage" class="space-y-4">
+            <div>
+              <label class="block text-sm text-[#f5f5f5] mb-2">Nome</label>
+              <input
+                v-model="packageForm.name"
+                required
+                placeholder="Ex: Plano Premium"
+                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
+              />
+            </div>
+            <div>
+              <label class="block text-sm text-[#f5f5f5] mb-2">Subtítulo</label>
+              <input
+                v-model="packageForm.subtitle"
+                placeholder="Ex: Acesso completo à academia"
+                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
+              />
+            </div>
+            <div>
+              <label class="block text-sm text-[#f5f5f5] mb-2">Preço (R$)</label>
+              <input
+                v-model.number="packageForm.price"
+                type="number"
+                min="0"
+                step="0.01"
+                required
+                placeholder="99.90"
+                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
+              />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-[#f5f5f5] mb-2">Ordem de exibição</label>
+                <input
+                  v-model.number="packageForm.display_order"
+                  type="number"
+                  min="0"
+                  class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
+                />
+              </div>
+              <div class="flex flex-col gap-3 pt-6">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    v-model="packageForm.is_featured"
+                    class="accent-[#a3e635] w-4 h-4"
+                  />
+                  <span class="text-sm text-[#f5f5f5]">Destaque</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    v-model="packageForm.is_active"
+                    class="accent-[#a3e635] w-4 h-4"
+                  />
+                  <span class="text-sm text-[#f5f5f5]">Ativo</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Features dinâmicas -->
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <label class="text-sm text-[#f5f5f5]">Funcionalidades</label>
+                <button
+                  type="button"
+                  @click="packageForm.features.push('')"
+                  class="text-xs text-[#a3e635] hover:underline"
+                >
+                  + Adicionar item
+                </button>
+              </div>
+              <div class="space-y-2">
+                <div
+                  v-if="packageForm.features.length === 0"
+                  class="text-xs text-[#555] text-center py-3 border border-dashed border-[#333] rounded-lg"
+                >
+                  Nenhuma funcionalidade adicionada
+                </div>
+                <div
+                  v-for="(feat, i) in packageForm.features"
+                  :key="i"
+                  class="flex items-center gap-2"
+                >
+                  <input
+                    v-model="packageForm.features[i]"
+                    :placeholder="`Funcionalidade ${i + 1}`"
+                    class="flex-1 bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-2 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
+                  />
+                  <button
+                    type="button"
+                    @click="packageForm.features.splice(i, 1)"
+                    class="text-red-400 hover:text-red-300 transition-colors p-1"
+                  >
+                    <X class="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button
+                type="button"
+                @click="showPackageModal = false"
+                class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm hover:border-[#333] transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                :disabled="savingPackage"
+                class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60"
+              >
+                {{ savingPackage ? "Salvando..." : "Salvar" }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- ==================== SLIDE MODAL ==================== -->
+    <Teleport to="body">
+      <div
+        v-if="showSlideModal"
+        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+        @click.self="showSlideModal = false"
+      >
+        <div class="bg-[#141414] border border-[#262626] rounded-xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+          <h3 class="font-display text-2xl text-white mb-6">
+            {{ editingSlide ? "EDITAR SLIDE" : "NOVO SLIDE" }}
+          </h3>
+          <form @submit.prevent="saveSlide" class="space-y-4">
+            <div>
+              <label class="block text-sm text-[#f5f5f5] mb-2">URL da imagem (desktop)</label>
+              <input
+                v-model="slideForm.image_url"
+                required
+                placeholder="https://..."
+                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
+              />
+              <!-- Preview desktop -->
+              <div
+                v-if="slideForm.image_url"
+                class="mt-2 w-full h-32 rounded-lg overflow-hidden bg-[#1a1a1a] border border-[#262626] flex items-center justify-center"
+              >
+                <img
+                  :src="slideForm.image_url"
+                  alt="preview desktop"
+                  class="w-full h-full object-cover"
+                  @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm text-[#f5f5f5] mb-2">URL da imagem (mobile) <span class="text-[#555]">opcional</span></label>
+              <input
+                v-model="slideForm.mobile_image_url"
+                placeholder="https://..."
+                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
+              />
+              <!-- Preview mobile -->
+              <div
+                v-if="slideForm.mobile_image_url"
+                class="mt-2 w-24 h-32 rounded-lg overflow-hidden bg-[#1a1a1a] border border-[#262626] flex items-center justify-center"
+              >
+                <img
+                  :src="slideForm.mobile_image_url"
+                  alt="preview mobile"
+                  class="w-full h-full object-cover"
+                  @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm text-[#f5f5f5] mb-2">Texto alternativo (alt)</label>
+              <input
+                v-model="slideForm.alt_text"
+                placeholder="Descrição da imagem para acessibilidade"
+                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
+              />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-[#f5f5f5] mb-2">Ordem de exibição</label>
+                <input
+                  v-model.number="slideForm.display_order"
+                  type="number"
+                  min="0"
+                  class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
+                />
+              </div>
+              <div class="flex items-end pb-3">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    v-model="slideForm.is_active"
+                    class="accent-[#a3e635] w-4 h-4"
+                  />
+                  <span class="text-sm text-[#f5f5f5]">Ativo</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button
+                type="button"
+                @click="showSlideModal = false"
+                class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm hover:border-[#333] transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                :disabled="savingSlide"
+                class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60"
+              >
+                {{ savingSlide ? "Salvando..." : "Salvar" }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Dumbbell, CreditCard, Users, UserPlus, LogOut, Plus, Loader2 } from "lucide-vue-next";
+import { Dumbbell, CreditCard, Users, UserPlus, LogOut, Plus, Loader2, Package, Image as ImageIcon, X } from "lucide-vue-next";
 
 definePageMeta({ middleware: "auth" });
 
@@ -635,6 +1086,8 @@ const navItems = computed(() => {
     { key: "alunos", label: "Alunos", icon: Users },
     { key: "treinos", label: "Treinos", icon: Dumbbell },
     { key: "financeiro", label: "Financeiro", icon: CreditCard },
+    { key: "pacotes", label: "Pacotes", icon: Package },
+    { key: "slides", label: "Slides", icon: ImageIcon },
   ];
   if (isAdmin.value) {
     items.splice(2, 0, { key: "professores", label: "Professores", icon: Users });
@@ -857,6 +1310,208 @@ const confirmPayment = async (id: string) => {
   } catch {}
 };
 
+// --- Pacotes ---
+interface PackageItem {
+  id: string;
+  name: string;
+  subtitle?: string | null;
+  price: number;
+  is_featured: boolean;
+  is_active: boolean;
+  display_order: number;
+  features: string[];
+}
+
+const packages = ref<PackageItem[]>([]);
+const loadingPackages = ref(false);
+const packagesError = ref("");
+const showPackageModal = ref(false);
+const editingPackage = ref<PackageItem | null>(null);
+const savingPackage = ref(false);
+const packageForm = reactive({
+  name: "",
+  subtitle: "",
+  price: 0,
+  is_featured: false,
+  is_active: true,
+  display_order: 0,
+  features: [] as string[],
+});
+
+const fetchPackages = async () => {
+  loadingPackages.value = true;
+  packagesError.value = "";
+  try {
+    packages.value = await api.get<PackageItem[]>("/packages/all");
+  } catch (e: any) {
+    packagesError.value = e?.message || "Erro ao carregar pacotes.";
+  }
+  loadingPackages.value = false;
+};
+
+const openPackageModal = (pkg?: PackageItem) => {
+  editingPackage.value = pkg || null;
+  if (pkg) {
+    packageForm.name = pkg.name;
+    packageForm.subtitle = pkg.subtitle ?? "";
+    packageForm.price = pkg.price;
+    packageForm.is_featured = pkg.is_featured;
+    packageForm.is_active = pkg.is_active;
+    packageForm.display_order = pkg.display_order;
+    packageForm.features = [...(pkg.features ?? [])];
+  } else {
+    Object.assign(packageForm, {
+      name: "",
+      subtitle: "",
+      price: 0,
+      is_featured: false,
+      is_active: true,
+      display_order: 0,
+      features: [],
+    });
+  }
+  showPackageModal.value = true;
+};
+
+const savePackage = async () => {
+  savingPackage.value = true;
+  try {
+    const payload = {
+      name: packageForm.name,
+      subtitle: packageForm.subtitle || undefined,
+      price: packageForm.price,
+      is_featured: packageForm.is_featured,
+      is_active: packageForm.is_active,
+      display_order: packageForm.display_order,
+      features: packageForm.features.filter((f) => f.trim() !== ""),
+    };
+    if (editingPackage.value) {
+      const updated = await api.put<PackageItem>(`/packages/${editingPackage.value.id}`, payload);
+      const idx = packages.value.findIndex((p) => p.id === updated.id);
+      if (idx !== -1) packages.value[idx] = updated;
+    } else {
+      const created = await api.post<PackageItem>("/packages", payload);
+      packages.value.push(created);
+    }
+    showPackageModal.value = false;
+  } catch {}
+  savingPackage.value = false;
+};
+
+const deletePackage = async (id: string) => {
+  if (!confirm("Remover este pacote?")) return;
+  try {
+    await api.del(`/packages/${id}`);
+    packages.value = packages.value.filter((p) => p.id !== id);
+  } catch {}
+};
+
+const togglePackageField = async (pkg: PackageItem, field: "is_active" | "is_featured") => {
+  const original = pkg[field];
+  pkg[field] = !original;
+  try {
+    await api.put(`/packages/${pkg.id}`, { [field]: pkg[field] });
+  } catch {
+    pkg[field] = original;
+  }
+};
+
+// --- Slides ---
+interface SliderImage {
+  id: string;
+  image_url: string;
+  mobile_image_url?: string | null;
+  alt_text?: string | null;
+  display_order: number;
+  is_active: boolean;
+}
+
+const sliderImages = ref<SliderImage[]>([]);
+const loadingSlides = ref(false);
+const slidesError = ref("");
+const showSlideModal = ref(false);
+const editingSlide = ref<SliderImage | null>(null);
+const savingSlide = ref(false);
+const slideForm = reactive({
+  image_url: "",
+  mobile_image_url: "",
+  alt_text: "",
+  display_order: 0,
+  is_active: true,
+});
+
+const fetchSlides = async () => {
+  loadingSlides.value = true;
+  slidesError.value = "";
+  try {
+    sliderImages.value = await api.get<SliderImage[]>("/slider-images/all");
+  } catch (e: any) {
+    slidesError.value = e?.message || "Erro ao carregar slides.";
+  }
+  loadingSlides.value = false;
+};
+
+const openSlideModal = (slide?: SliderImage) => {
+  editingSlide.value = slide || null;
+  if (slide) {
+    slideForm.image_url = slide.image_url;
+    slideForm.mobile_image_url = slide.mobile_image_url ?? "";
+    slideForm.alt_text = slide.alt_text ?? "";
+    slideForm.display_order = slide.display_order;
+    slideForm.is_active = slide.is_active;
+  } else {
+    Object.assign(slideForm, {
+      image_url: "",
+      mobile_image_url: "",
+      alt_text: "",
+      display_order: 0,
+      is_active: true,
+    });
+  }
+  showSlideModal.value = true;
+};
+
+const saveSlide = async () => {
+  savingSlide.value = true;
+  try {
+    const payload = {
+      image_url: slideForm.image_url,
+      mobile_image_url: slideForm.mobile_image_url || undefined,
+      alt_text: slideForm.alt_text || undefined,
+      display_order: slideForm.display_order,
+      is_active: slideForm.is_active,
+    };
+    if (editingSlide.value) {
+      const updated = await api.put<SliderImage>(`/slider-images/${editingSlide.value.id}`, payload);
+      const idx = sliderImages.value.findIndex((s) => s.id === updated.id);
+      if (idx !== -1) sliderImages.value[idx] = updated;
+    } else {
+      const created = await api.post<SliderImage>("/slider-images", payload);
+      sliderImages.value.push(created);
+    }
+    showSlideModal.value = false;
+  } catch {}
+  savingSlide.value = false;
+};
+
+const deleteSlide = async (id: string) => {
+  if (!confirm("Remover este slide?")) return;
+  try {
+    await api.del(`/slider-images/${id}`);
+    sliderImages.value = sliderImages.value.filter((s) => s.id !== id);
+  } catch {}
+};
+
+const toggleSlideActive = async (slide: SliderImage) => {
+  const original = slide.is_active;
+  slide.is_active = !original;
+  try {
+    await api.put(`/slider-images/${slide.id}`, { is_active: slide.is_active });
+  } catch {
+    slide.is_active = original;
+  }
+};
+
 // --- Watch tabs ---
 watch(activeTab, async (tab) => {
   if (tab === "alunos" && students.value.length === 0) await fetchStudents();
@@ -867,6 +1522,8 @@ watch(activeTab, async (tab) => {
   if (tab === "financeiro" && allPayments.value.length === 0) {
     await Promise.all([fetchAllPayments(), fetchStudents()]);
   }
+  if (tab === "pacotes" && packages.value.length === 0) await fetchPackages();
+  if (tab === "slides" && sliderImages.value.length === 0) await fetchSlides();
 });
 
 onMounted(async () => {
