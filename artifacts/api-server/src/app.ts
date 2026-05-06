@@ -1,4 +1,6 @@
 import express, { type Express } from "express";
+import path from "node:path";
+import { mkdirSync } from "node:fs";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
@@ -36,6 +38,11 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Serve uploaded photos statically
+const uploadsDir = "/app/uploads";
+mkdirSync(uploadsDir, { recursive: true });
+app.use("/uploads", express.static(uploadsDir));
 
 app.use("/api", router);
 

@@ -9,6 +9,7 @@ import plansRouter from "./plans.js";
 import sliderImagesRoutes from "./slider-images.js";
 import packagesRouter from "./packages.js";
 import groupsRouter from "./groups.js";
+import checkinsRouter from "./checkins.js";
 
 const router: IRouter = Router();
 
@@ -22,6 +23,6 @@ router.use("/plans", plansRouter);
 router.use("/slider-images", sliderImagesRoutes);
 router.use("/packages", packagesRouter);
 router.use("/groups", groupsRouter);
+router.use("/checkins", checkinsRouter);
 
 export default router;
-

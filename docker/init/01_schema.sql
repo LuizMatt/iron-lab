@@ -115,7 +115,9 @@ CREATE TABLE IF NOT EXISTS groups (
   description TEXT,
   owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   invite_token VARCHAR(20) UNIQUE NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW() NOT NULL
+  max_members INTEGER NOT NULL DEFAULT 20,
+  created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS group_members (
@@ -124,4 +126,13 @@ CREATE TABLE IF NOT EXISTS group_members (
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   joined_at TIMESTAMP DEFAULT NOW() NOT NULL,
   UNIQUE (group_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS workout_checkins (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  duration_minutes INTEGER NOT NULL,
+  photo_url VARCHAR(500),
+  checked_in_at TIMESTAMP DEFAULT NOW() NOT NULL
 );

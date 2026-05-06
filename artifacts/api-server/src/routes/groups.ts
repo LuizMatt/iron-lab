@@ -6,7 +6,6 @@ const router = Router();
 
 router.use(authenticate);
 
-// Rotas fixas ANTES das rotas com parâmetro (:id) para evitar conflitos
 router.post("/", groupsController.create);
 router.get("/me", groupsController.getMine);
 router.post("/join/:inviteToken", groupsController.joinByToken);

@@ -12,19 +12,11 @@ import { generateInviteToken } from "../lib/invite-token.js";
 const MAX_MEMBERS = 20;
 const MAX_TOKEN_RETRIES = 5;
 
-/**
- * Retorna a data de início do mês corrente no formato YYYY-MM-DD.
- * Compatível com o campo completedAt de workout_logs (varchar YYYY-MM-DD).
- */
 function currentMonthStart(): string {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
 }
 
-/**
- * Gera um invite_token único, verificando colisões no banco.
- * Retorna em até MAX_TOKEN_RETRIES tentativas.
- */
 async function resolveUniqueToken(): Promise<string> {
   for (let i = 0; i < MAX_TOKEN_RETRIES; i++) {
     const token = generateInviteToken();
@@ -40,9 +32,6 @@ async function resolveUniqueToken(): Promise<string> {
 }
 
 export const groupsService = {
-  /**
-   * Cria um grupo e automaticamente adiciona o criador como membro.
-   */
   async create(userId: string, data: { name: string; description?: string }) {
     const inviteToken = await resolveUniqueToken();
 
@@ -61,9 +50,6 @@ export const groupsService = {
     return group;
   },
 
-  /**
-   * Lista todos os grupos dos quais o usuário é membro.
-   */
   async getMine(userId: string) {
     const memberships = await db
       .select({ groupId: groupMembersTable.groupId })
@@ -80,10 +66,6 @@ export const groupsService = {
       .where(inArray(groupsTable.id, groupIds));
   },
 
-  /**
-   * Retorna detalhes do grupo com lista de membros e ranking do mês corrente.
-   * O ranking é calculado on-the-fly a partir dos workout_logs existentes.
-   */
   async getById(groupId: string, userId: string) {
     const [group] = await db
       .select()
@@ -93,7 +75,6 @@ export const groupsService = {
 
     if (!group) throw new AppError(404, "Grupo não encontrado");
 
-    // Verificar se o usuário é membro para poder ver os detalhes
     const [membership] = await db
       .select({ id: groupMembersTable.id })
       .from(groupMembersTable)
@@ -107,7 +88,6 @@ export const groupsService = {
 
     if (!membership) throw new AppError(403, "Você não é membro deste grupo");
 
-    // Buscar membros com dados do usuário
     const members = await db
       .select({
         userId: groupMembersTable.userId,
@@ -121,7 +101,6 @@ export const groupsService = {
 
     const memberIds = members.map((m) => m.userId);
 
-    // Calcular ranking do mês corrente via workout_logs
     let ranking: {
       userId: string;
       name: string;
@@ -160,9 +139,6 @@ export const groupsService = {
     return { ...group, members, ranking };
   },
 
-  /**
-   * Edita nome e/ou descrição. Apenas o owner pode editar.
-   */
   async update(
     groupId: string,
     userId: string,
@@ -187,9 +163,6 @@ export const groupsService = {
     return updated;
   },
 
-  /**
-   * Dissolve o grupo e todos os seus membros (cascade). Apenas o owner pode.
-   */
   async remove(groupId: string, userId: string) {
     const [group] = await db
       .select()
@@ -204,9 +177,6 @@ export const groupsService = {
     await db.delete(groupsTable).where(eq(groupsTable.id, groupId));
   },
 
-  /**
-   * Entra no grupo via invite_token. Valida limite de 20 membros e duplicidade.
-   */
   async joinByToken(inviteToken: string, userId: string) {
     const [group] = await db
       .select()
@@ -232,9 +202,6 @@ export const groupsService = {
     return group;
   },
 
-  /**
-   * Sai do grupo. O owner não pode sair (deve dissolver ou transferir).
-   */
   async leave(groupId: string, userId: string) {
     const [group] = await db
       .select()
@@ -272,9 +239,6 @@ export const groupsService = {
       );
   },
 
-  /**
-   * Expulsa um membro do grupo. Apenas o owner pode expulsar.
-   */
   async kickMember(groupId: string, ownerId: string, targetUserId: string) {
     const [group] = await db
       .select()
