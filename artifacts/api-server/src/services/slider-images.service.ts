@@ -1,10 +1,9 @@
-import { db } from "@repo/db";
-import { sliderImages } from "@repo/db/schema";
+import { db, sliderImages } from "@workspace/db";
 import { eq, asc } from "drizzle-orm";
 
 export const sliderImagesService = {
   async getActive() {
-    return db   
+    return db
       .select()
       .from(sliderImages)
       .where(eq(sliderImages.is_active, true))
