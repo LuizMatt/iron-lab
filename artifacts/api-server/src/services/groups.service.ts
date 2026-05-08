@@ -1,9 +1,16 @@
+//import {
+//  db,
+//  groupsTable,
+//  groupMembersTable,
+//  usersTable,
+  //workoutLogsTable,
+//} from "@workspace/db";
 import {
   db,
   groupsTable,
   groupMembersTable,
   usersTable,
-  workoutLogsTable,
+  workoutCheckinsTable,
 } from "@workspace/db";
 import { eq, and, gte, inArray, count } from "drizzle-orm";
 import { AppError } from "../lib/app-error.js";
@@ -112,7 +119,22 @@ export const groupsService = {
       const monthStart = currentMonthStart();
 
       const checkins = await db
-        .select({ userId: workoutLogsTable.userId, total: count() })
+  .select({
+    userId: workoutCheckinsTable.userId,
+    total: count(),
+  })
+  .from(workoutCheckinsTable)
+  .where(
+    and(
+      inArray(workoutCheckinsTable.userId, memberIds),
+      gte(workoutCheckinsTable.checkedInAt, new Date(monthStart)),
+    ),
+  )
+  .groupBy(workoutCheckinsTable.userId);
+
+/*
+      const checkins = await db
+        .select({ userId: workoutLogsTable .userId, total: count() }) 
         .from(workoutLogsTable)
         .where(
           and(
@@ -121,7 +143,7 @@ export const groupsService = {
           ),
         )
         .groupBy(workoutLogsTable.userId);
-
+*/
       const checkinsMap = Object.fromEntries(
         checkins.map((c) => [c.userId, Number(c.total)]),
       );

@@ -181,7 +181,7 @@ export const workoutsService = {
 
   async complete(workoutId: string, userId: string) {
     // Pegamos a data e forçamos o tipo string explicitamente
-const today = (new Date().toISOString().split("T") as unknown) as string;    
+    const today = new Date().toISOString().split("T")[0];
     const [alreadyLogged] = await db
       .select()
       .from(workoutLogsTable)
