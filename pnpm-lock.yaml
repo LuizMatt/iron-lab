@@ -146,7 +146,7 @@ importers:
         specifier: ^9.0.3
         version: 9.0.3
       multer:
-        specifier: ^1.4.5-lts.2
+        specifier: 1.4.5-lts.2
         version: 1.4.5-lts.2
       pino:
         specifier: ^9
