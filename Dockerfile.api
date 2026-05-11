@@ -32,6 +32,9 @@ COPY --from=builder /app/artifacts/api-server/node_modules ./artifacts/api-serve
 # Copy compiled API bundle into the same location as the source so pnpm resolution works
 COPY --from=builder /app/artifacts/api-server/dist ./artifacts/api-server/dist
 
+# Cria pastas de upload
+RUN mkdir -p /app/uploads/sliderImages
+
 EXPOSE 3001
 
 ENV NODE_ENV=production
