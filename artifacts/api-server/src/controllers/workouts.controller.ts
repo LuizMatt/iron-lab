@@ -2,6 +2,7 @@ import { Response, NextFunction } from "express";
 import { z } from "zod";
 import { workoutsService } from "../services/workouts.service.js";
 import { AuthRequest } from "../middlewares/auth.js";
+import { getParam } from "../lib/request-param.js";
 
 const exerciseSchema = z.object({
   name: z.string().min(1),
@@ -47,13 +48,14 @@ export const workoutsController = {
   },
 
   async update(req: AuthRequest, res: Response, next: NextFunction) {
+    const id = getParam(req.params.id);
     const parse = workoutSchema.safeParse(req.body);
     if (!parse.success) {
       res.status(400).json({ error: true, message: parse.error.message });
       return;
     }
     try {
-      const workout = await workoutsService.update(req.params.id, parse.data);
+      const workout = await workoutsService.update(id, parse.data);
       res.json(workout);
     } catch (err) {
       next(err);
@@ -61,8 +63,9 @@ export const workoutsController = {
   },
 
   async remove(req: AuthRequest, res: Response, next: NextFunction) {
+    const id = getParam(req.params.id);
     try {
-      await workoutsService.delete(req.params.id);
+      await workoutsService.delete(id);
       res.json({ success: true, message: "Treino removido" });
     } catch (err) {
       next(err);
@@ -70,13 +73,14 @@ export const workoutsController = {
   },
 
   async assign(req: AuthRequest, res: Response, next: NextFunction) {
+    const id = getParam(req.params.id);
     const parse = assignSchema.safeParse(req.body);
     if (!parse.success) {
       res.status(400).json({ error: true, message: parse.error.message });
       return;
     }
     try {
-      await workoutsService.assign(req.params.id, parse.data.userIds);
+      await workoutsService.assign(id, parse.data.userIds);
       res.json({ success: true, message: "Treino atribuído com sucesso" });
     } catch (err) {
       next(err);
@@ -84,8 +88,9 @@ export const workoutsController = {
   },
 
   async complete(req: AuthRequest, res: Response, next: NextFunction) {
+    const id = getParam(req.params.id);
     try {
-      await workoutsService.complete(req.params.id, req.user!.id);
+      await workoutsService.complete(id, req.user!.id);
       res.json({ success: true, message: "Treino concluído!" });
     } catch (err) {
       next(err);
