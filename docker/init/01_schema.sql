@@ -136,3 +136,18 @@ CREATE TABLE IF NOT EXISTS workout_checkins (
   photo_url VARCHAR(500),
   checked_in_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
+
+INSERT INTO groups (
+  id,
+  name,
+  description,
+  owner_id,
+  invite_token
+)
+VALUES (
+  gen_random_uuid()::text,
+  'Grupo Teste',
+  'Grupo inicial para desenvolvimento',
+  '<ID_DE_UM_USUARIO_EXISTENTE>',
+  'IRONLAB01'
+);

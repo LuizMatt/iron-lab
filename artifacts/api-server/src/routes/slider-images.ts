@@ -4,10 +4,8 @@ import { authenticate, requireRole } from "../middlewares/auth.js";
 
 const router = Router();
 
-// público
 router.get("/", sliderImagesController.getActive);
 
-// admin
 router.get("/all", authenticate, requireRole("admin"), sliderImagesController.getAll);
 router.post("/", authenticate, requireRole("admin"), sliderImagesController.create);
 router.put("/:id", authenticate, requireRole("admin"), sliderImagesController.update);
