@@ -4,22 +4,19 @@
     "outDir": "dist",
     "rootDir": "src",
     "types": ["node"],
-    "baseUrl": ".",
     "paths": {
       "@repo/db": ["../../lib/db/src/index.ts"],
       "@repo/db/*": ["../../lib/db/src/*"],
       "@repo/api-zod": ["../../lib/api-zod/src/index.ts"],
       "@repo/api-zod/*": ["../../lib/api-zod/src/*"]
     },
-    "ignoreDeprecations": "6.0"
+    //"ignoreDeprecations": "5.0"
+
   },
   "include": ["src"],
   "references": [
     {
       "path": "../../lib/db"
-    },
-    {
-      "path": "../../lib/api-zod"
     }
   ]
 }
