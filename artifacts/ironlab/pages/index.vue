@@ -79,36 +79,57 @@
       </div>
     </section>
 
-    <!-- Planos -->
-    <section id="planos" class="py-24 px-6">
+    <!-- Planos — dinâmico -->
+    <section v-if="loadingPackages || activePackages.length > 0" id="planos" class="py-24 px-6">
       <div class="mx-auto max-w-4xl">
         <h2 class="font-display text-5xl text-center text-white mb-4">ESCOLHA SEU PLANO</h2>
         <p class="text-[#737373] text-center mb-16">Sem surpresas. Cancele quando quiser.</p>
-        <div class="grid md:grid-cols-2 gap-6">
+
+        <!-- Skeleton -->
+        <div v-if="loadingPackages" class="grid md:grid-cols-2 gap-6">
           <div
-            v-for="plan in plans"
-            :key="plan.name"
+            v-for="n in 2"
+            :key="n"
+            class="p-8 rounded-xl border border-[#262626] bg-[#141414] animate-pulse"
+          >
+            <div class="h-8 bg-[#262626] rounded w-1/3 mb-4"></div>
+            <div class="h-12 bg-[#262626] rounded w-1/2 mb-6"></div>
+            <div class="space-y-3 mb-8">
+              <div v-for="i in 4" :key="i" class="h-4 bg-[#262626] rounded w-full"></div>
+            </div>
+            <div class="h-10 bg-[#262626] rounded w-full"></div>
+          </div>
+        </div>
+
+        <!-- Cards dinâmicos -->
+        <div v-else class="grid md:grid-cols-2 gap-6">
+          <div
+            v-for="pkg in activePackages"
+            :key="pkg.id"
             :class="[
-              'p-8 rounded-xl border transition-all',
-              plan.featured
-                ? 'border-[#a3e635] bg-[#141414] relative'
+              'p-8 rounded-xl border transition-all relative',
+              pkg.is_featured
+                ? 'border-[#a3e635] bg-[#141414]'
                 : 'border-[#262626] bg-[#0d0d0d]'
             ]"
           >
-            <div v-if="plan.featured" class="absolute -top-3 left-1/2 -translate-x-1/2">
+            <div v-if="pkg.is_featured" class="absolute -top-3 left-1/2 -translate-x-1/2">
               <span class="bg-[#a3e635] text-[#0d0d0d] text-xs font-bold px-4 py-1 rounded-full">
                 MAIS POPULAR
               </span>
             </div>
-            <h3 class="font-display text-3xl text-white mb-2">{{ plan.name }}</h3>
+            <h3 class="font-display text-3xl text-white mb-1">{{ pkg.name }}</h3>
+            <p v-if="pkg.subtitle" class="text-[#737373] text-sm mb-4">{{ pkg.subtitle }}</p>
             <div class="flex items-baseline gap-1 mb-6">
               <span class="text-[#737373] text-sm">R$</span>
-              <span class="font-display text-5xl text-[#a3e635]">{{ plan.price }}</span>
-              <span class="text-[#737373] text-sm">{{ plan.period }}</span>
+              <span class="font-display text-5xl text-[#a3e635]">
+                {{ Number(pkg.price).toFixed(2).replace(".", ",") }}
+              </span>
+              <span class="text-[#737373] text-sm">/mês</span>
             </div>
             <ul class="space-y-3 mb-8">
               <li
-                v-for="item in plan.features"
+                v-for="item in pkg.features"
                 :key="item"
                 class="flex items-center gap-3 text-sm text-[#f5f5f5]"
               >
@@ -120,7 +141,7 @@
               to="/login"
               :class="[
                 'block text-center py-3 rounded font-semibold text-sm transition-all',
-                plan.featured
+                pkg.is_featured
                   ? 'bg-[#a3e635] text-[#0d0d0d] hover:bg-[#bef264]'
                   : 'border border-[#262626] text-[#f5f5f5] hover:border-[#a3e635]/50'
               ]"
@@ -145,6 +166,8 @@
 <script setup lang="ts">
 import { Dumbbell, TrendingUp, CreditCard, CheckCircle2 } from "lucide-vue-next";
 
+const api = useApi();
+
 const features = [
   {
     icon: Dumbbell,
@@ -162,7 +185,7 @@ const features = [
     icon: CreditCard,
     title: "PAGAMENTO VIA PIX",
     description:
-      "Geração automática de cobranças Pix com QR Code. Rápido, sem burocracia.",
+      "Geração automática de cobranças Pix com QR Code. Rápido, sem burocrecia.",
   },
 ];
 
@@ -173,31 +196,19 @@ const stats = [
   { value: "24h", label: "Suporte online" },
 ];
 
-const plans = [
-  {
-    name: "MENSAL",
-    price: "99",
-    period: "/mês",
-    featured: false,
-    features: [
-      "Acesso completo à academia",
-      "Treinos personalizados",
-      "App de acompanhamento",
-      "Suporte via WhatsApp",
-    ],
-  },
-  {
-    name: "SEMESTRAL",
-    price: "150",
-    period: "/sem.",
-    featured: true,
-    features: [
-      "Tudo do plano mensal",
-      "2 meses grátis",
-      "Avaliação física mensal",
-      "Prioridade no atendimento",
-      "Acesso à área VIP",
-    ],
-  },
-];
+const packages = ref<Package[]>([]);
+const loadingPackages = ref(true);
+
+const activePackages = computed(() =>
+  packages.value
+    .filter((p) => p.is_active)
+    .sort((a, b) => a.display_order - b.display_order),
+);
+
+onMounted(async () => {
+  try {
+    packages.value = await api.get<Package[]>("/packages");
+  } catch {}
+  loadingPackages.value = false;
+});
 </script>
