@@ -39,8 +39,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Serve uploaded photos statically
-const uploadsDir = "/app/uploads";
+// Serve uploaded photos statically.
+const uploadsDir = process.env["UPLOADS_DIR"] || path.resolve(process.cwd(), "uploads");
 mkdirSync(uploadsDir, { recursive: true });
 app.use("/uploads", express.static(uploadsDir));
 

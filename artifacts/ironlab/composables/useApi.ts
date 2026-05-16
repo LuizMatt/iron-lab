@@ -17,13 +17,19 @@ export const useApi = () => {
 
   const get = <T>(path: string) => request<T>(path);
 
+  const requestBody = (body?: unknown) =>
+    body as Record<string, unknown> | BodyInit | null | undefined;
+
   const post = <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: "POST", body });
+    request<T>(path, { method: "POST", body: requestBody(body) });
 
   const put = <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: "PUT", body });
+    request<T>(path, { method: "PUT", body: requestBody(body) });
+
+  const patch = <T>(path: string, body?: unknown) =>
+    request<T>(path, { method: "PATCH", body: requestBody(body) });
 
   const del = <T>(path: string) => request<T>(path, { method: "DELETE" });
 
-  return { get, post, put, del };
+  return { get, post, put, patch, del };
 };
