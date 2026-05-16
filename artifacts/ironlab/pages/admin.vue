@@ -332,7 +332,7 @@
               <tr v-for="slide in sliderImages" :key="slide.id" class="hover:bg-[#1a1a1a] transition-colors">
                 <td class="px-6 py-4">
                   <div class="w-20 h-12 rounded-lg overflow-hidden bg-[#262626] flex items-center justify-center border border-[#333]">
-                    <img v-if="slide.image_url" :src="slide.image_url" :alt="slide.alt_text || 'slide'" class="w-full h-full object-cover" @error="(e) => (e.target as HTMLImageElement).style.display = 'none'" />
+                    <img v-if="slide.image_url" :src="slide.image_url" :alt="slide.alt_text || 'slide'" class="w-full h-full object-cover" @error="(e: Event) => (e.target as HTMLImageElement).style.display = 'none'" />
                     <ImageIcon v-else class="w-5 h-5 text-[#555]" />
                   </div>
                 </td>

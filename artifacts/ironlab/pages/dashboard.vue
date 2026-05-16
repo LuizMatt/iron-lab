@@ -288,6 +288,212 @@
         </div>
       </div>
 
+      <!-- Grupos tab -->
+      <div v-if="activeTab === 'grupos'">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h1 class="font-display text-4xl text-white">GRUPOS</h1>
+            <p class="text-[#737373] text-sm mt-1">Acompanhe seus grupos e o ranking mensal</p>
+          </div>
+          <button
+            @click="openCreateGroupModal"
+            class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors"
+          >
+            <Plus class="w-4 h-4" />
+            Criar Grupo
+          </button>
+        </div>
+
+        <div v-if="loadingGroups" class="text-center py-16 text-[#737373]">
+          <Loader2 class="w-8 h-8 animate-spin mx-auto mb-4 text-[#a3e635]" />
+          Carregando grupos...
+        </div>
+
+        <div v-else-if="groupsError" class="bg-red-500/10 border border-red-500/20 rounded-xl p-5 text-red-400 text-sm mb-6">
+          {{ groupsError }}
+        </div>
+
+        <div v-else-if="groups.length === 0" class="text-center py-16 bg-[#141414] border border-[#262626] rounded-xl">
+          <Users class="w-12 h-12 mx-auto mb-4 text-[#737373]" />
+          <p class="text-[#737373]">Você ainda não participa de nenhum grupo.</p>
+          <p class="text-[#555] text-sm mt-1">Crie um grupo ou use um link de convite para entrar.</p>
+        </div>
+
+        <div v-else class="grid grid-cols-1 xl:grid-cols-[minmax(0,360px)_1fr] gap-6">
+          <div class="space-y-3">
+            <button
+              v-for="group in groups"
+              :key="group.id"
+              @click="selectGroup(group.id)"
+              :class="[
+                'w-full text-left bg-[#141414] border rounded-xl p-5 transition-colors',
+                selectedGroupId === group.id ? 'border-[#a3e635]/40' : 'border-[#262626] hover:border-[#333]'
+              ]"
+            >
+              <div class="flex items-start justify-between gap-4">
+                <div class="min-w-0">
+                  <h3 class="text-white font-semibold truncate">{{ group.name }}</h3>
+                  <p v-if="group.description" class="text-[#737373] text-xs mt-1 line-clamp-2">
+                    {{ group.description }}
+                  </p>
+                </div>
+                <span class="shrink-0 text-xs px-2 py-1 rounded-full bg-[#1a1a1a] border border-[#262626] text-[#a3e635]">
+                  #{{ groupUserRank(group) || "-" }}
+                </span>
+              </div>
+              <div class="flex items-center gap-4 mt-4 text-xs text-[#737373]">
+                <span class="flex items-center gap-1.5">
+                  <Users class="w-3.5 h-3.5" />
+                  {{ groupMemberCount(group) }} membros
+                </span>
+                <span>Sua posição no ranking</span>
+              </div>
+            </button>
+          </div>
+
+          <div class="bg-[#141414] border border-[#262626] rounded-xl min-h-[420px]">
+            <div v-if="loadingGroupDetail" class="text-center py-16 text-[#737373]">
+              <Loader2 class="w-8 h-8 animate-spin mx-auto mb-4 text-[#a3e635]" />
+              Carregando grupo...
+            </div>
+
+            <div v-else-if="groupDetailError" class="p-6 text-red-400 text-sm">
+              {{ groupDetailError }}
+            </div>
+
+            <div v-else-if="selectedGroup" class="p-6 space-y-6">
+              <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <h2 class="font-display text-3xl text-white">{{ selectedGroup.name }}</h2>
+                    <span v-if="isSelectedGroupOwner" class="text-[10px] px-2 py-0.5 bg-[#a3e635]/10 text-[#a3e635] rounded-full border border-[#a3e635]/20">
+                      Admin
+                    </span>
+                  </div>
+                  <p class="text-[#737373] text-sm max-w-2xl">
+                    {{ selectedGroup.description || "Sem descrição." }}
+                  </p>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    v-if="isSelectedGroupOwner"
+                    @click="openEditGroupModal"
+                    class="flex items-center gap-2 px-3 py-2 bg-[#1a1a1a] border border-[#262626] text-[#f5f5f5] rounded-lg text-xs hover:border-[#a3e635]/30 transition-colors"
+                  >
+                    <Pencil class="w-3.5 h-3.5" />
+                    Editar
+                  </button>
+                  <button
+                    @click="leaveSelectedGroup"
+                    class="flex items-center gap-2 px-3 py-2 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-xs hover:bg-red-500/20 transition-colors"
+                  >
+                    <LogOut class="w-3.5 h-3.5" />
+                    Sair
+                  </button>
+                  <button
+                    v-if="isSelectedGroupOwner"
+                    @click="dissolveSelectedGroup"
+                    class="flex items-center gap-2 px-3 py-2 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-xs hover:bg-red-500/20 transition-colors"
+                  >
+                    <Trash2 class="w-3.5 h-3.5" />
+                    Dissolver
+                  </button>
+                </div>
+              </div>
+
+              <div v-if="isSelectedGroupOwner" class="bg-[#1a1a1a] border border-[#262626] rounded-xl p-4">
+                <div class="flex flex-col md:flex-row md:items-center gap-3">
+                  <div class="min-w-0 flex-1">
+                    <p class="text-[#737373] text-xs uppercase tracking-wider mb-1">Link de convite</p>
+                    <p class="text-[#f5f5f5] text-sm break-all">{{ selectedGroupInviteLink || "Link indisponível" }}</p>
+                  </div>
+                  <button
+                    @click="copyInviteLink(selectedGroupInviteLink)"
+                    :disabled="!selectedGroupInviteLink"
+                    class="flex items-center justify-center gap-2 px-4 py-2 bg-[#a3e635]/10 text-[#a3e635] border border-[#a3e635]/20 rounded-lg text-xs font-semibold hover:bg-[#a3e635]/20 transition-colors disabled:opacity-50"
+                  >
+                    <Copy class="w-3.5 h-3.5" />
+                    Copiar
+                  </button>
+                </div>
+                <p v-if="copyMessage" class="text-[#a3e635] text-xs mt-2">{{ copyMessage }}</p>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <h3 class="font-display text-2xl text-white mb-4">MEMBROS</h3>
+                  <div class="space-y-2">
+                    <div
+                      v-for="member in selectedGroup.members"
+                      :key="memberKey(member)"
+                      class="flex items-center justify-between gap-3 bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3"
+                    >
+                      <div class="min-w-0 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-[#a3e635]/10 flex items-center justify-center text-[#a3e635] text-xs font-bold shrink-0">
+                          {{ member.name?.charAt(0) }}
+                        </div>
+                        <div class="min-w-0">
+                          <p class="text-[#f5f5f5] text-sm truncate">{{ member.name }}</p>
+                          <p class="text-[#737373] text-xs truncate">{{ member.email || "Membro" }}</p>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-2 shrink-0">
+                        <Crown v-if="isOwnerMember(member)" class="w-4 h-4 text-[#a3e635]" />
+                        <button
+                          v-if="isSelectedGroupOwner && !isOwnerMember(member)"
+                          @click="kickMember(member)"
+                          class="text-red-400 hover:text-red-300 transition-colors"
+                          title="Expulsar membro"
+                        >
+                          <UserMinus class="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <p v-if="selectedGroup.members.length === 0" class="text-[#737373] text-sm">
+                      Nenhum membro encontrado.
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 class="font-display text-2xl text-white mb-4">RANKING DO MÊS</h3>
+                  <div class="space-y-2">
+                    <div
+                      v-for="(rank, index) in sortedGroupRanking"
+                      :key="rank.userId"
+                      class="flex items-center justify-between gap-3 bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3"
+                    >
+                      <div class="flex items-center gap-3 min-w-0">
+                        <div
+                          :class="[
+                            'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0',
+                            index === 0 ? 'bg-[#a3e635] text-[#0d0d0d]' : 'bg-[#262626] text-[#f5f5f5]'
+                          ]"
+                        >
+                          {{ index + 1 }}
+                        </div>
+                        <span class="text-[#f5f5f5] text-sm truncate">{{ rank.name }}</span>
+                      </div>
+                      <span class="text-[#a3e635] text-sm font-semibold">
+                        {{ rankingCheckIns(rank) }} check-ins
+                      </span>
+                    </div>
+                    <p v-if="sortedGroupRanking.length === 0" class="text-[#737373] text-sm">
+                      O ranking ainda não possui check-ins neste mês.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="text-center py-16 text-[#737373]">
+              Selecione um grupo para ver membros e ranking.
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Perfil tab -->
       <div v-if="activeTab === 'perfil'">
         <h1 class="font-display text-4xl text-white mb-8">MEU PERFIL</h1>
@@ -385,6 +591,89 @@
           >
             Fechar
           </button>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Create/Edit group modal -->
+    <Teleport to="body">
+      <div
+        v-if="showGroupModal"
+        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+        @click.self="closeGroupModal"
+      >
+        <div class="bg-[#141414] border border-[#262626] rounded-xl p-8 max-w-lg w-full">
+          <h3 class="font-display text-2xl text-white mb-6">
+            {{ editingGroup ? "EDITAR GRUPO" : "CRIAR GRUPO" }}
+          </h3>
+
+          <form v-if="!createdGroupInviteLink || editingGroup" @submit.prevent="saveGroup" class="space-y-4">
+            <div>
+              <label class="block text-sm text-[#f5f5f5] mb-2">Nome</label>
+              <input
+                v-model="groupForm.name"
+                required
+                maxlength="80"
+                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
+              />
+            </div>
+            <div>
+              <label class="block text-sm text-[#f5f5f5] mb-2">Descrição</label>
+              <textarea
+                v-model="groupForm.description"
+                rows="4"
+                maxlength="240"
+                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors resize-none"
+              />
+            </div>
+
+            <div v-if="groupFormError" class="text-xs py-2 px-3 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20">
+              {{ groupFormError }}
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button
+                type="button"
+                @click="closeGroupModal"
+                class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                :disabled="savingGroup"
+                class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60"
+              >
+                {{ savingGroup ? "Salvando..." : editingGroup ? "Salvar" : "Criar Grupo" }}
+              </button>
+            </div>
+          </form>
+
+          <div v-else class="space-y-5">
+            <div class="bg-[#a3e635]/10 border border-[#a3e635]/20 rounded-xl p-4">
+              <p class="text-[#a3e635] font-semibold text-sm mb-2">Grupo criado com sucesso!</p>
+              <p class="text-[#737373] text-xs mb-3">Envie este link para quem deve entrar no grupo.</p>
+              <p class="bg-[#1a1a1a] border border-[#262626] rounded-lg p-3 text-[#f5f5f5] text-xs break-all">
+                {{ createdGroupInviteLink }}
+              </p>
+            </div>
+            <div class="flex gap-3">
+              <button
+                @click="copyInviteLink(createdGroupInviteLink)"
+                class="flex-1 flex items-center justify-center gap-2 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors"
+              >
+                <Copy class="w-4 h-4" />
+                Copiar
+              </button>
+              <button
+                @click="closeGroupModal"
+                class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm"
+              >
+                Fechar
+              </button>
+            </div>
+            <p v-if="copyMessage" class="text-[#a3e635] text-xs">{{ copyMessage }}</p>
+          </div>
         </div>
       </div>
     </Teleport>
@@ -499,21 +788,29 @@ import {
   Plus,
   Loader2,
   Trophy,
+  Users,
+  Copy,
+  Crown,
+  UserMinus,
+  Pencil,
+  Trash2,
 } from "lucide-vue-next";
 
 definePageMeta({ middleware: "auth" });
 
 const auth = useAuth();
 const api = useApi();
+const route = useRoute();
 
-const activeTab = ref<"treinos" | "streak" | "financeiro" | "perfil">("treinos");
+const activeTab = ref<"treinos" | "streak" | "financeiro" | "grupos" | "perfil">("treinos");
 
 const navItems = [
   { key: "treinos", label: "Treinos", icon: Dumbbell },
   { key: "streak", label: "Sequência", icon: Flame },
   { key: "financeiro", label: "Financeiro", icon: CreditCard },
+  { key: "grupos", label: "Grupos", icon: Users },
   { key: "perfil", label: "Perfil", icon: User },
-];
+] as const;
 
 // --- Treinos ---
 const workouts = ref<Workout[]>([]);
@@ -543,6 +840,8 @@ const completeWorkout = async (id: string) => {
   try {
     await api.post(`/workouts/${id}/complete`);
     await fetchStreak();
+    if (groups.value.length > 0) await fetchGroups();
+    if (selectedGroupId.value) await fetchGroupDetail(selectedGroupId.value);
   } catch {}
   completingId.value = "";
 };
@@ -609,6 +908,238 @@ const fetchFinanceiro = async () => {
   }
 };
 
+// --- Grupos ---
+const groups = ref<GroupSummary[]>([]);
+const loadingGroups = ref(false);
+const groupsError = ref("");
+const selectedGroupId = ref("");
+const selectedGroup = ref<GroupDetail | null>(null);
+const loadingGroupDetail = ref(false);
+const groupDetailError = ref("");
+const showGroupModal = ref(false);
+const editingGroup = ref<GroupDetail | null>(null);
+const savingGroup = ref(false);
+const groupFormError = ref("");
+const createdGroupInviteLink = ref("");
+const copyMessage = ref("");
+const groupForm = reactive({ name: "", description: "" });
+
+const groupMemberCount = (group: GroupSummary) =>
+  group.memberCount ?? group.totalMembers ?? 0;
+
+const groupUserRank = (group: GroupSummary) =>
+  group.rankPosition ?? group.userRank ?? group.position ?? null;
+
+const memberKey = (member: GroupMember) => member.userId || member.id;
+
+const isSelectedGroupOwner = computed(() => {
+  if (!selectedGroup.value || !auth.user.value) return false;
+  return selectedGroup.value.ownerId === auth.user.value.id;
+});
+
+const selectedGroupInviteLink = computed(() =>
+  buildInviteLink(selectedGroup.value?.inviteLink || selectedGroup.value?.inviteToken),
+);
+
+const rankingCheckIns = (rank: GroupRankingItem) =>
+  rank.checkIns ?? rank.checkinsThisMonth ?? 0;
+
+const sortedGroupRanking = computed(() =>
+  [...(selectedGroup.value?.ranking ?? [])].sort((a, b) => rankingCheckIns(b) - rankingCheckIns(a)),
+);
+
+const buildInviteLink = (invite?: string | null) => {
+  if (!invite) return "";
+  if (/^https?:\/\//.test(invite)) return invite;
+  const token = invite.replace(/^\/?grupos\/entrar\//, "");
+  if (import.meta.client) return `${window.location.origin}/grupos/entrar/${token}`;
+  return `/grupos/entrar/${token}`;
+};
+
+const normalizeGroupDetail = (group: GroupDetail | GroupSummary): GroupDetail => ({
+  ...group,
+  members: "members" in group && Array.isArray(group.members) ? group.members : [],
+  ranking:
+    "ranking" in group && Array.isArray(group.ranking)
+      ? group.ranking.map((rank) => ({
+          ...rank,
+          checkIns: rankingCheckIns(rank),
+        }))
+      : [],
+});
+
+const fetchGroups = async () => {
+  loadingGroups.value = true;
+  groupsError.value = "";
+  try {
+    const summaries = await api.get<GroupSummary[]>("/groups/me");
+    const details = await Promise.all(
+      summaries.map(async (group) => {
+        try {
+          return normalizeGroupDetail(await api.get<GroupDetail>(`/groups/${group.id}`));
+        } catch {
+          return null;
+        }
+      }),
+    );
+
+    groups.value = summaries.map((group, index) => {
+      const detail = details[index];
+      if (!detail) return group;
+      const rankIndex = detail.ranking.findIndex((rank) => rank.userId === auth.user.value?.id);
+      return {
+        ...group,
+        memberCount: detail.members.length,
+        rankPosition: rankIndex === -1 ? null : rankIndex + 1,
+      };
+    });
+
+    if (selectedGroupId.value) {
+      const detail = details.find((item) => item?.id === selectedGroupId.value);
+      if (detail) selectedGroup.value = detail;
+    } else if (groups.value[0]) {
+      selectedGroupId.value = groups.value[0].id;
+      selectedGroup.value = details[0];
+    }
+  } catch (err: unknown) {
+    groupsError.value = (err as Error).message || "Erro ao carregar grupos.";
+  } finally {
+    loadingGroups.value = false;
+  }
+};
+
+const fetchGroupDetail = async (id: string) => {
+  loadingGroupDetail.value = true;
+  groupDetailError.value = "";
+  try {
+    selectedGroup.value = normalizeGroupDetail(await api.get<GroupDetail>(`/groups/${id}`));
+  } catch (err: unknown) {
+    groupDetailError.value = (err as Error).message || "Erro ao carregar o grupo.";
+  } finally {
+    loadingGroupDetail.value = false;
+  }
+};
+
+const selectGroup = async (id: string) => {
+  selectedGroupId.value = id;
+  await fetchGroupDetail(id);
+};
+
+const openCreateGroupModal = () => {
+  editingGroup.value = null;
+  Object.assign(groupForm, { name: "", description: "" });
+  groupFormError.value = "";
+  createdGroupInviteLink.value = "";
+  copyMessage.value = "";
+  showGroupModal.value = true;
+};
+
+const openEditGroupModal = () => {
+  if (!selectedGroup.value) return;
+  editingGroup.value = selectedGroup.value;
+  groupForm.name = selectedGroup.value.name;
+  groupForm.description = selectedGroup.value.description ?? "";
+  groupFormError.value = "";
+  createdGroupInviteLink.value = "";
+  showGroupModal.value = true;
+};
+
+const closeGroupModal = () => {
+  showGroupModal.value = false;
+  editingGroup.value = null;
+  groupFormError.value = "";
+  copyMessage.value = "";
+};
+
+const saveGroup = async () => {
+  savingGroup.value = true;
+  groupFormError.value = "";
+  try {
+    const payload = {
+      name: groupForm.name,
+      description: groupForm.description || undefined,
+    };
+
+    if (editingGroup.value) {
+      await api.patch<GroupSummary>(`/groups/${editingGroup.value.id}`, payload);
+      const updated = normalizeGroupDetail(await api.get<GroupDetail>(`/groups/${editingGroup.value.id}`));
+      selectedGroup.value = updated;
+      const idx = groups.value.findIndex((group) => group.id === updated.id);
+      if (idx !== -1) groups.value[idx] = { ...groups.value[idx], ...updated };
+      closeGroupModal();
+    } else {
+      const createdSummary = await api.post<GroupSummary>("/groups", payload);
+      const created = normalizeGroupDetail(await api.get<GroupDetail>(`/groups/${createdSummary.id}`));
+      groups.value.unshift(created);
+      selectedGroupId.value = created.id;
+      selectedGroup.value = created;
+      createdGroupInviteLink.value = buildInviteLink(created.inviteLink || created.inviteToken);
+    }
+  } catch (err: unknown) {
+    groupFormError.value = (err as Error).message || "Erro ao salvar grupo.";
+  } finally {
+    savingGroup.value = false;
+  }
+};
+
+const copyInviteLink = async (link: string) => {
+  if (!link || !import.meta.client) return;
+  copyMessage.value = "";
+  try {
+    await navigator.clipboard.writeText(link);
+    copyMessage.value = "Link copiado.";
+  } catch {
+    copyMessage.value = "Não foi possível copiar automaticamente.";
+  }
+};
+
+const isOwnerMember = (member: GroupMember) =>
+  member.userId === selectedGroup.value?.ownerId ||
+  member.id === selectedGroup.value?.ownerId ||
+  member.role === "owner";
+
+const kickMember = async (member: GroupMember) => {
+  if (!selectedGroup.value) return;
+  if (!confirm(`Expulsar ${member.name} do grupo?`)) return;
+  try {
+    await api.del(`/groups/${selectedGroup.value.id}/members/${member.userId || member.id}`);
+    await fetchGroupDetail(selectedGroup.value.id);
+    await fetchGroups();
+  } catch (err: unknown) {
+    groupDetailError.value = (err as Error).message || "Erro ao expulsar membro.";
+  }
+};
+
+const leaveSelectedGroup = async () => {
+  if (!selectedGroup.value) return;
+  if (!confirm("Sair deste grupo?")) return;
+  const groupId = selectedGroup.value.id;
+  try {
+    await api.del(`/groups/${groupId}/leave`);
+    groups.value = groups.value.filter((group) => group.id !== groupId);
+    selectedGroupId.value = groups.value[0]?.id ?? "";
+    selectedGroup.value = null;
+    if (selectedGroupId.value) await fetchGroupDetail(selectedGroupId.value);
+  } catch (err: unknown) {
+    groupDetailError.value = (err as Error).message || "Erro ao sair do grupo.";
+  }
+};
+
+const dissolveSelectedGroup = async () => {
+  if (!selectedGroup.value) return;
+  if (!confirm("Dissolver este grupo? Esta ação não pode ser desfeita.")) return;
+  const groupId = selectedGroup.value.id;
+  try {
+    await api.del(`/groups/${groupId}`);
+    groups.value = groups.value.filter((group) => group.id !== groupId);
+    selectedGroupId.value = groups.value[0]?.id ?? "";
+    selectedGroup.value = null;
+    if (selectedGroupId.value) await fetchGroupDetail(selectedGroupId.value);
+  } catch (err: unknown) {
+    groupDetailError.value = (err as Error).message || "Erro ao dissolver grupo.";
+  }
+};
+
 // --- Perfil ---
 const profileForm = reactive({ name: "", email: "", phone: "" });
 const savingProfile = ref(false);
@@ -635,6 +1166,7 @@ watch(activeTab, async (tab) => {
   if (tab === "treinos" && workouts.value.length === 0) await fetchWorkouts();
   if (tab === "streak" && !streak.value) await fetchStreak();
   if (tab === "financeiro" && payments.value.length === 0) await fetchFinanceiro();
+  if (tab === "grupos" && groups.value.length === 0) await fetchGroups();
   if (tab === "perfil" && auth.user.value) {
     profileForm.name = auth.user.value.name ?? "";
     profileForm.email = auth.user.value.email ?? "";
@@ -643,7 +1175,13 @@ watch(activeTab, async (tab) => {
 });
 
 onMounted(async () => {
-  await fetchWorkouts();
+  if (route.query.tab === "grupos") {
+    activeTab.value = "grupos";
+    await fetchGroups();
+    if (typeof route.query.group === "string") await selectGroup(route.query.group);
+  } else {
+    await fetchWorkouts();
+  }
   if (auth.user.value) {
     profileForm.name = auth.user.value.name ?? "";
     profileForm.email = auth.user.value.email ?? "";
