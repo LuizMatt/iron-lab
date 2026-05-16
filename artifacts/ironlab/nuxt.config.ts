@@ -7,7 +7,9 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
 
   alias: {
-    "#app-manifest": fileURLToPath(new URL("./.nuxt/manifest/meta/dev.json", import.meta.url)),
+    "#app-manifest": fileURLToPath(
+      new URL("./.nuxt/manifest/meta/dev.json", import.meta.url),
+    ),
   },
 
   devServer: {
@@ -20,6 +22,7 @@ export default defineNuxtConfig({
     server: {
       proxy: {
         "/api": process.env.API_PROXY_TARGET || "http://localhost:3001",
+        "/uploads": process.env.API_PROXY_TARGET || "http://localhost:3001",
       },
     },
   },

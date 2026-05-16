@@ -31,5 +31,11 @@ export const useApi = () => {
 
   const del = <T>(path: string) => request<T>(path, { method: "DELETE" });
 
-  return { get, post, put, patch, del };
+  const upload = <T>(path: string, formData: FormData) =>
+    request<T>(path, {
+      method: "POST",
+      body: formData as unknown as Record<string, unknown>,
+    });
+
+  return { get, post, put, patch, del, upload };
 };

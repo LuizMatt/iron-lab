@@ -107,6 +107,16 @@ overrides:
 importers:
 
   .:
+    dependencies:
+      '@oxc-minify/binding-win32-x64-msvc':
+        specifier: ^0.131.0
+        version: 0.131.0
+      '@oxc-parser/binding-win32-x64-msvc':
+        specifier: ^0.131.0
+        version: 0.131.0
+      '@oxc-transform/binding-win32-x64-msvc':
+        specifier: ^0.131.0
+        version: 0.131.0
     devDependencies:
       prettier:
         specifier: ^3.8.1
@@ -731,6 +741,12 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@oxc-minify/binding-win32-x64-msvc@0.131.0':
+    resolution: {integrity: sha512-Lih6D0rjXStl0eUjzlcCiqr60AI/LuE+Zy29beEeXrXqTjOf8t0mcDX/MN3TZBBncxwUNi6osAEsKj4FRnItmQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [win32]
+
   '@oxc-parser/binding-android-arm-eabi@0.117.0':
     resolution: {integrity: sha512-XarGPJpaobgKjfm7xRfCGWWszuPbm/OeP91NdMhxtcLZ/qLTmWF0P0z0gqmr0Uysi1F1v1BNtcST11THMrcEOw==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -854,6 +870,12 @@ packages:
 
   '@oxc-parser/binding-win32-x64-msvc@0.117.0':
     resolution: {integrity: sha512-ysRJAjIbB4e5y+t9PZs7TwbgOV/GVT//s30AORLCT/pedYwpYzHq6ApXK7is9fvyfZtgT3anNir8+esurmyaDw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [win32]
+
+  '@oxc-parser/binding-win32-x64-msvc@0.131.0':
+    resolution: {integrity: sha512-o14Hk8dAyiEUMFEWEgmAwFZvBt1RzAYLM3xeQ+5315JXgVYhoemivgYcbYVRbsFkS71ShMGlAFE0kPnr460rww==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [win32]
@@ -984,6 +1006,12 @@ packages:
 
   '@oxc-transform/binding-win32-x64-msvc@0.117.0':
     resolution: {integrity: sha512-V7YzavQnYcRJBeJkp0qpb3FKrlm5I57XJetCYB4jsjStuboQmnFMZ/XQH55Szlf/kVyeU9ddQwv72gJJ5BrGjQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [win32]
+
+  '@oxc-transform/binding-win32-x64-msvc@0.131.0':
+    resolution: {integrity: sha512-VXgk106WLl3NpBO/6G2gxkWBHguCJm01mGqAq2Q0l2o7hnbglsND0UWSCtM3a9MlsDimfJkLWFQveZu4UtnRvA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [win32]
@@ -5046,6 +5074,8 @@ snapshots:
   '@oxc-minify/binding-win32-x64-msvc@0.117.0':
     optional: true
 
+  '@oxc-minify/binding-win32-x64-msvc@0.131.0': {}
+
   '@oxc-parser/binding-android-arm-eabi@0.117.0':
     optional: true
 
@@ -5110,6 +5140,8 @@ snapshots:
 
   '@oxc-parser/binding-win32-x64-msvc@0.117.0':
     optional: true
+
+  '@oxc-parser/binding-win32-x64-msvc@0.131.0': {}
 
   '@oxc-project/types@0.117.0': {}
 
@@ -5177,6 +5209,8 @@ snapshots:
 
   '@oxc-transform/binding-win32-x64-msvc@0.117.0':
     optional: true
+
+  '@oxc-transform/binding-win32-x64-msvc@0.131.0': {}
 
   '@parcel/watcher-android-arm64@2.5.6':
     optional: true

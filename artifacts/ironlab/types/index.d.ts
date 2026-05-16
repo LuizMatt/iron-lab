@@ -116,3 +116,12 @@ declare interface SliderImage {
   is_active: boolean;
   createdAt?: string;
 }
+
+declare interface CheckIn {
+  id: string;
+  userId: string;
+  title: string;
+  durationMinutes: number;
+  photoUrl?: string | null;
+  checkedInAt: string;
+}
