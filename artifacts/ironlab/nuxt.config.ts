@@ -1,9 +1,16 @@
 import tailwindcss from "@tailwindcss/vite";
+import { fileURLToPath } from "node:url";
 
 export default defineNuxtConfig({
   ssr: false,
 
   devtools: { enabled: false },
+
+  alias: {
+    "#app-manifest": fileURLToPath(
+      new URL("./.nuxt/manifest/meta/dev.json", import.meta.url),
+    ),
+  },
 
   devServer: {
     host: "0.0.0.0",
@@ -12,6 +19,12 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      proxy: {
+        "/api": process.env.API_PROXY_TARGET || "http://localhost:3001",
+        "/uploads": process.env.API_PROXY_TARGET || "http://localhost:3001",
+      },
+    },
   },
 
   css: ["~/assets/css/main.css"],
