@@ -930,15 +930,15 @@ const groupMemberCount = (group: GroupSummary) =>
 const groupUserRank = (group: GroupSummary) =>
   group.rankPosition ?? group.userRank ?? group.position ?? null;
 
-const memberKey = (member: GroupMember) => member.userId || member.id;
+const memberKey = (member: GroupMember) => member.userId ?? member.id ?? Math.random().toString();
 
 const isSelectedGroupOwner = computed(() => {
-  if (!selectedGroup.value || !auth.user.value) return false;
+  if (!selectedGroup.value?.ownerId || !auth.user.value) return false;
   return selectedGroup.value.ownerId === auth.user.value.id;
 });
 
 const selectedGroupInviteLink = computed(() =>
-  buildInviteLink(selectedGroup.value?.inviteLink || selectedGroup.value?.inviteToken),
+  buildInviteLink(selectedGroup.value?.inviteToken),
 );
 
 const rankingCheckIns = (rank: GroupRankingItem) =>
@@ -973,33 +973,25 @@ const fetchGroups = async () => {
   groupsError.value = "";
   try {
     const summaries = await api.get<GroupSummary[]>("/groups/me");
-    const details = await Promise.all(
-      summaries.map(async (group) => {
-        try {
-          return normalizeGroupDetail(await api.get<GroupDetail>(`/groups/${group.id}`));
-        } catch {
-          return null;
-        }
-      }),
-    );
-
-    groups.value = summaries.map((group, index) => {
-      const detail = details[index];
-      if (!detail) return group;
-      const rankIndex = detail.ranking.findIndex((rank) => rank.userId === auth.user.value?.id);
-      return {
-        ...group,
-        memberCount: detail.members.length,
-        rankPosition: rankIndex === -1 ? null : rankIndex + 1,
-      };
-    });
+    groups.value = summaries;
 
     if (selectedGroupId.value) {
-      const detail = details.find((item) => item?.id === selectedGroupId.value);
-      if (detail) selectedGroup.value = detail;
-    } else if (groups.value[0]) {
-      selectedGroupId.value = groups.value[0].id;
-      selectedGroup.value = details[0];
+      const exists = summaries.some((g) => g.id === selectedGroupId.value);
+      if (exists) {
+        await fetchGroupDetail(selectedGroupId.value);
+      } else if (summaries[0]) {
+        selectedGroupId.value = summaries[0].id;
+        await fetchGroupDetail(summaries[0].id);
+      } else {
+        selectedGroupId.value = "";
+        selectedGroup.value = null;
+      }
+    } else if (summaries[0]) {
+      selectedGroupId.value = summaries[0].id;
+      await fetchGroupDetail(summaries[0].id);
+    } else {
+      selectedGroupId.value = "";
+      selectedGroup.value = null;
     }
   } catch (err: unknown) {
     groupsError.value = (err as Error).message || "Erro ao carregar grupos.";
@@ -1073,7 +1065,7 @@ const saveGroup = async () => {
       groups.value.unshift(created);
       selectedGroupId.value = created.id;
       selectedGroup.value = created;
-      createdGroupInviteLink.value = buildInviteLink(created.inviteLink || created.inviteToken);
+      createdGroupInviteLink.value = buildInviteLink(created.inviteToken);
     }
   } catch (err: unknown) {
     groupFormError.value = (err as Error).message || "Erro ao salvar grupo.";
@@ -1166,7 +1158,7 @@ watch(activeTab, async (tab) => {
   if (tab === "treinos" && workouts.value.length === 0) await fetchWorkouts();
   if (tab === "streak" && !streak.value) await fetchStreak();
   if (tab === "financeiro" && payments.value.length === 0) await fetchFinanceiro();
-  if (tab === "grupos" && groups.value.length === 0) await fetchGroups();
+  if (tab === "grupos") await fetchGroups();
   if (tab === "perfil" && auth.user.value) {
     profileForm.name = auth.user.value.name ?? "";
     profileForm.email = auth.user.value.email ?? "";

@@ -67,10 +67,28 @@ export const groupsService = {
 
     const groupIds = memberships.map((m) => m.groupId);
 
-    return db
+    const groups = await db
       .select()
       .from(groupsTable)
       .where(inArray(groupsTable.id, groupIds));
+
+    const counts = await db
+      .select({
+        groupId: groupMembersTable.groupId,
+        count: count(),
+      })
+      .from(groupMembersTable)
+      .where(inArray(groupMembersTable.groupId, groupIds))
+      .groupBy(groupMembersTable.groupId);
+
+    const countsMap = Object.fromEntries(
+      counts.map((c) => [c.groupId, Number(c.count)]),
+    );
+
+    return groups.map((g) => ({
+      ...g,
+      memberCount: countsMap[g.id] ?? 0,
+    }));
   },
 
   async getById(groupId: string, userId: string) {
@@ -137,7 +155,7 @@ export const groupsService = {
       }))
       .sort((a, b) => b.checkinsThisMonth - a.checkinsThisMonth);
 
-    return { ...group, members, ranking };
+    return { ...group, members, ranking, memberCount: members.length };
   },
 
   async update(

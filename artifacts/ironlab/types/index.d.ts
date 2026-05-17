@@ -80,13 +80,13 @@ declare interface GroupSummary {
   id: string;
   name: string;
   description?: string | null;
-  memberCount?: number;
+  memberCount: number;
   totalMembers?: number;
   rankPosition?: number | null;
   userRank?: number | null;
   position?: number | null;
-  ownerId?: string;
-  inviteToken?: string | null;
+  ownerId: string;
+  inviteToken: string;
   inviteLink?: string | null;
 }
 
