@@ -6,7 +6,10 @@ export const useApi = () => {
     options?: Parameters<typeof $fetch>[1],
   ): Promise<T> => {
     try {
-      return await $fetch<T>(`${apiBase}${path}`, options);
+      return await $fetch<T>(`${apiBase}${path}`, {
+        credentials: "include",
+        ...options,
+      });
     } catch (err: unknown) {
       const fetchErr = err as { data?: { message?: string }; message?: string };
       const message =

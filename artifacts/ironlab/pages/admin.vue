@@ -965,15 +965,25 @@ const saveSlide = async () => {
     formData.append("is_active", String(slideForm.is_active));
 
     if (editingSlide.value) {
-      const updated = await $fetch<SliderImage>(`/api/slider-images/${editingSlide.value.id}`, { method: "PUT", body: formData });
+      const updated = await $fetch<SliderImage>(`/api/slider-images/${editingSlide.value.id}`, {
+        method: "PUT",
+        body: formData,
+        credentials: "include",
+      });
       const idx = sliderImages.value.findIndex((s) => s.id === updated.id);
       if (idx !== -1) sliderImages.value[idx] = updated;
     } else {
-      const created = await $fetch<SliderImage>("/api/slider-images", { method: "POST", body: formData });
+      const created = await $fetch<SliderImage>("/api/slider-images", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
       sliderImages.value.push(created);
     }
     showSlideModal.value = false;
-  } catch {}
+  } catch (e: any) {
+    alert(e?.data?.message || e?.message || "Erro ao salvar slide.");
+  }
   savingSlide.value = false;
 };
 
@@ -985,7 +995,11 @@ const deleteSlide = async (id: string) => {
 const toggleSlideActive = async (slide: SliderImage) => {
   const original = slide.is_active;
   slide.is_active = !original;
-  try { await api.put(`/slider-images/${slide.id}`, { is_active: slide.is_active }); } catch { slide.is_active = original; }
+  try {
+    await api.patch(`/slider-images/${slide.id}`, { is_active: slide.is_active });
+  } catch {
+    slide.is_active = original;
+  }
 };
 
 // --- Watch tabs ---

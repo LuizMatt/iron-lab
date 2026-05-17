@@ -10,6 +10,7 @@ router.get("/", sliderImagesController.getActive);
 router.get("/all", authenticate, requireRole("admin"), sliderImagesController.getAll);
 router.post("/", authenticate, requireRole("admin"), sliderUpload, sliderImagesController.create);
 router.put("/:id", authenticate, requireRole("admin"), sliderUpload, sliderImagesController.update);
+router.patch("/:id", authenticate, requireRole("admin"), sliderImagesController.patch);
 router.delete("/:id", authenticate, requireRole("admin"), sliderImagesController.remove);
 
 export default router;

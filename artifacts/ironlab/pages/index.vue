@@ -100,6 +100,33 @@
       </div>
     </section>
 
+    <!-- Fallback caso não haja slides ativos -->
+    <section v-else-if="!slidesLoading" class="pb-16 px-6">
+      <div class="mx-auto max-w-6xl">
+        <div class="relative overflow-hidden rounded-2xl border border-[#262626] bg-linear-to-r from-[#141414] via-[#1a2e05]/30 to-[#141414] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6 min-h-[220px]">
+          <div class="space-y-4 max-w-2xl text-left">
+            <span class="inline-block px-3 py-1 rounded-full border border-[#a3e635]/25 bg-[#a3e635]/5 text-[#a3e635] text-xs font-semibold tracking-wider uppercase">
+              Bem-vindo à IronLab
+            </span>
+            <h2 class="font-display text-4xl md:text-5xl text-white leading-tight">
+              TREINE COM <span class="text-[#a3e635]">FOCO</span> E SUPERE OS SEUS LIMITES
+            </h2>
+            <p class="text-[#737373] text-sm md:text-base leading-relaxed">
+              Consulte seu professor para obter sua rotina de treinamento personalizada e acompanhe seus dados integrados.
+            </p>
+          </div>
+          <div class="flex gap-4 shrink-0 mt-4 md:mt-0">
+            <NuxtLink
+              to="/login"
+              class="px-6 py-3 rounded bg-[#a3e635] text-[#0d0d0d] font-bold text-sm hover:bg-[#bef264] transition-all hover:scale-105"
+            >
+              ÁREA DO ALUNO
+            </NuxtLink>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Skeleton loading do carrossel -->
     <section v-if="slidesLoading" class="pb-16 px-6">
       <div class="mx-auto max-w-6xl">

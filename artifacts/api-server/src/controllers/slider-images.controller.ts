@@ -3,16 +3,25 @@ import { z } from "zod";
 import { sliderImagesService } from "../services/slider-images.service.js";
 import { AuthRequest } from "../middlewares/auth.js";
 
+const booleanCoerce = z.preprocess(
+  (val) => {
+    if (val === "true") return true;
+    if (val === "false") return false;
+    return val;
+  },
+  z.boolean().optional()
+);
+
 const createSchema = z.object({
   alt_text: z.string().min(1),
   display_order: z.coerce.number().int(),
-  is_active: z.coerce.boolean().optional(),
+  is_active: booleanCoerce,
 });
 
 const updateSchema = z.object({
   alt_text: z.string().min(1).optional(),
   display_order: z.coerce.number().int().optional(),
-  is_active: z.coerce.boolean().optional(),
+  is_active: booleanCoerce,
 });
 
 function getUploadedPath(
@@ -89,6 +98,23 @@ export const sliderImagesController = {
         ...(image_url && { image_url }),
         ...(mobile_image_url && { mobile_image_url }),
       });
+      res.json(updated);
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  async patch(req: AuthRequest, res: Response, next: NextFunction) {
+    const parse = updateSchema.safeParse(req.body);
+    if (!parse.success) {
+      res.status(400).json({ error: true, message: parse.error.message });
+      return;
+    }
+
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+    try {
+      const updated = await sliderImagesService.update(id, parse.data);
       res.json(updated);
     } catch (err) {
       next(err);
