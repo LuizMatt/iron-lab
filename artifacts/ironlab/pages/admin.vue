@@ -272,7 +272,7 @@
               <tr v-for="pkg in packages" :key="pkg.id" class="hover:bg-[#1a1a1a] transition-colors">
                 <td class="px-6 py-4 text-sm text-[#f5f5f5] font-medium">{{ pkg.name }}</td>
                 <td class="px-6 py-4 text-sm text-[#737373] max-w-[180px] truncate">{{ pkg.subtitle || "—" }}</td>
-                <td class="px-6 py-4 text-sm text-[#f5f5f5]">R$ {{ Number(pkg.price).toFixed(2).replace(".", ",") }}</td>
+                <td class="px-6 py-4 text-sm text-[#f5f5f5]">R$ {{ (Number(pkg.price) / 100).toFixed(2).replace(".", ",") }}</td>
                 <td class="px-6 py-4">
                   <button @click="togglePackageField(pkg, 'is_featured')" :class="['text-xs px-2 py-1 rounded-full font-medium border transition-colors', pkg.is_featured ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20' : 'bg-[#1a1a1a] text-[#555] border-[#333] hover:border-[#555]']">
                     {{ pkg.is_featured ? "Destaque" : "Normal" }}
@@ -840,7 +840,7 @@ const openPackageModal = (pkg?: PackageItem) => {
   if (pkg) {
     packageForm.name = pkg.name;
     packageForm.subtitle = pkg.subtitle ?? "";
-    packageForm.price = pkg.price;
+    packageForm.price = pkg.price / 100;
     packageForm.is_featured = pkg.is_featured;
     packageForm.is_active = pkg.is_active;
     packageForm.display_order = pkg.display_order;
@@ -854,7 +854,7 @@ const openPackageModal = (pkg?: PackageItem) => {
 const savePackage = async () => {
   savingPackage.value = true;
   try {
-    const payload = { name: packageForm.name, subtitle: packageForm.subtitle || undefined, price: packageForm.price, is_featured: packageForm.is_featured, is_active: packageForm.is_active, display_order: packageForm.display_order, features: packageForm.features.filter((f) => f.trim() !== "") };
+    const payload = { name: packageForm.name, subtitle: packageForm.subtitle || undefined, price: Math.round(packageForm.price * 100), is_featured: packageForm.is_featured, is_active: packageForm.is_active, display_order: packageForm.display_order, features: packageForm.features.filter((f) => f.trim() !== "") };
     if (editingPackage.value) {
       const updated = await api.put<PackageItem>(`/packages/${editingPackage.value.id}`, payload);
       const idx = packages.value.findIndex((p) => p.id === updated.id);
@@ -864,7 +864,9 @@ const savePackage = async () => {
       packages.value.push(created);
     }
     showPackageModal.value = false;
-  } catch {}
+  } catch (e: any) {
+    alert(e?.message || "Erro ao salvar pacote.");
+  }
   savingPackage.value = false;
 };
 

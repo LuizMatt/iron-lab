@@ -14,6 +14,9 @@ COPY lib/ ./lib/
 # Copy ALL artifacts source (pnpm needs them for workspace resolution)
 COPY artifacts/ ./artifacts/
 
+# Copy scripts (pnpm preinstall script needs this)
+COPY scripts/ ./scripts/
+
 # Install dependencies (no native modules needed for frontend build)
 RUN pnpm install --frozen-lockfile
 

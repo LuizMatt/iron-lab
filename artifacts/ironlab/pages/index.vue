@@ -142,14 +142,21 @@
 
     <!-- Planos — dinâmico -->
     <section v-if="loadingPackages || activePackages.length > 0" id="planos" class="py-24 px-6">
-      <div class="mx-auto max-w-4xl">
+      <div
+        :class="[
+          'mx-auto transition-all duration-300',
+          loadingPackages ? 'max-w-6xl' :
+          activePackages.length === 1 ? 'max-w-md' :
+          activePackages.length === 2 ? 'max-w-4xl' : 'max-w-6xl'
+        ]"
+      >
         <h2 class="font-display text-5xl text-center text-white mb-4">ESCOLHA SEU PLANO</h2>
         <p class="text-[#737373] text-center mb-16">Sem surpresas. Cancele quando quiser.</p>
 
         <!-- Skeleton -->
-        <div v-if="loadingPackages" class="grid md:grid-cols-2 gap-6">
+        <div v-if="loadingPackages" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div
-            v-for="n in 2"
+            v-for="n in 3"
             :key="n"
             class="p-8 rounded-xl border border-[#262626] bg-[#141414] animate-pulse"
           >
@@ -163,7 +170,15 @@
         </div>
 
         <!-- Cards dinâmicos -->
-        <div v-else class="grid md:grid-cols-2 gap-6">
+        <div
+          v-else
+          :class="[
+            'grid gap-6',
+            activePackages.length === 1 ? 'grid-cols-1' :
+            activePackages.length === 2 ? 'grid-cols-1 md:grid-cols-2' :
+            'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+          ]"
+        >
           <div
             v-for="pkg in activePackages"
             :key="pkg.id"
@@ -184,7 +199,7 @@
             <div class="flex items-baseline gap-1 mb-6">
               <span class="text-[#737373] text-sm">R$</span>
               <span class="font-display text-5xl text-[#a3e635]">
-                {{ Number(pkg.price).toFixed(2).replace(".", ",") }}
+                {{ (Number(pkg.price) / 100).toFixed(2).replace(".", ",") }}
               </span>
               <span class="text-[#737373] text-sm">/mês</span>
             </div>
@@ -227,6 +242,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { Dumbbell, TrendingUp, CreditCard, CheckCircle2 } from "lucide-vue-next";
+import { useApi } from "../composables/useApi";
 
 const api = useApi();
 

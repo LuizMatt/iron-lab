@@ -27,6 +27,7 @@ const updateSchema = z.object({
 export const packagesController = {
   async getActive(req: Request, res: Response, next: NextFunction) {
     try {
+      res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
       const packages = await packagesService.getActive();
       res.json(packages);
     } catch (err) {

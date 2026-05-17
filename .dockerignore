@@ -11,4 +11,3 @@ node_modules
 .env.*.local
 attached_assets
 artifacts/mockup-sandbox
-scripts

@@ -14,6 +14,9 @@ COPY lib/ ./lib/
 # Copy ALL artifacts source (pnpm workspace resolution)
 COPY artifacts/ ./artifacts/
 
+# Copy scripts (pnpm preinstall script needs this)
+COPY scripts/ ./scripts/
+
 # Install all dependencies (bcrypt is in onlyBuiltDependencies, compiles automatically)
 RUN pnpm install --frozen-lockfile
 
