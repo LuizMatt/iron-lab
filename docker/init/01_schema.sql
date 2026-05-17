@@ -136,3 +136,37 @@ CREATE TABLE IF NOT EXISTS workout_checkins (
   photo_url VARCHAR(500),
   checked_in_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
+
+WITH seed_owner AS (
+  SELECT id FROM users LIMIT 1
+),
+inserted_group AS (
+  INSERT INTO groups (
+    id,
+    name,
+    description,
+    owner_id,
+    invite_token
+  )
+  SELECT
+    md5(random()::text || clock_timestamp()::text),
+    'Grupo Teste',
+    'Grupo inicial para desenvolvimento',
+    seed_owner.id,
+    'IRONLAB01'
+  FROM seed_owner
+  WHERE NOT EXISTS (
+    SELECT 1 FROM groups WHERE invite_token = 'IRONLAB01'
+  )
+  RETURNING id, owner_id
+)
+INSERT INTO group_members (
+  id,
+  group_id,
+  user_id
+)
+SELECT
+  md5(random()::text || clock_timestamp()::text),
+  inserted_group.id,
+  inserted_group.owner_id
+FROM inserted_group;

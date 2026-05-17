@@ -56,6 +56,45 @@ declare interface StreakData {
   weekDays: boolean[];
 }
 
+declare interface GroupMember {
+  id?: string;
+  userId?: string;
+  name: string;
+  email?: string | null;
+  avatarUrl?: string | null;
+  role?: "owner" | "admin" | "member" | string;
+  joinedAt?: string | null;
+  checkIns?: number;
+}
+
+declare interface GroupRankingItem {
+  userId: string;
+  name: string;
+  avatarUrl?: string | null;
+  checkIns?: number;
+  checkinsThisMonth?: number;
+  position?: number;
+}
+
+declare interface GroupSummary {
+  id: string;
+  name: string;
+  description?: string | null;
+  memberCount?: number;
+  totalMembers?: number;
+  rankPosition?: number | null;
+  userRank?: number | null;
+  position?: number | null;
+  ownerId?: string;
+  inviteToken?: string | null;
+  inviteLink?: string | null;
+}
+
+declare interface GroupDetail extends GroupSummary {
+  members: GroupMember[];
+  ranking: GroupRankingItem[];
+}
+
 declare interface Package {
   id: string;
   name: string;

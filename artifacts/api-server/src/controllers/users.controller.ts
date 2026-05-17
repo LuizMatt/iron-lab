@@ -2,6 +2,7 @@ import { Response, NextFunction } from "express";
 import { z } from "zod";
 import { usersService } from "../services/users.service.js";
 import { AuthRequest } from "../middlewares/auth.js";
+import { getParam } from "../lib/request-param.js";
 
 const createSchema = z.object({
   name: z.string().min(1),
@@ -30,7 +31,7 @@ export const usersController = {
   },
 
   async getById(req: AuthRequest, res: Response, next: NextFunction) {
-    const { id } = req.params;
+    const id = getParam(req.params.id);
     if (req.user!.role === "aluno" && req.user!.id !== id) {
       res.status(403).json({ error: true, message: "Acesso negado" });
       return;
@@ -58,7 +59,7 @@ export const usersController = {
   },
 
   async update(req: AuthRequest, res: Response, next: NextFunction) {
-    const { id } = req.params;
+    const id = getParam(req.params.id);
     if (req.user!.role === "aluno" && req.user!.id !== id) {
       res.status(403).json({ error: true, message: "Acesso negado" });
       return;
@@ -77,7 +78,7 @@ export const usersController = {
   },
 
   async remove(req: AuthRequest, res: Response, next: NextFunction) {
-    const { id } = req.params;
+    const id = getParam(req.params.id);
     try {
       await usersService.delete(id);
       res.json({ success: true, message: "Usuário removido" });

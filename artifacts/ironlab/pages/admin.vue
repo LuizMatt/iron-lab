@@ -10,9 +10,7 @@
       <div class="p-4 border-b border-[#1a1a1a]">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-full bg-[#a3e635]/20 flex items-center justify-center">
-            <span class="text-[#a3e635] font-bold text-sm">
-              {{ auth.user.value?.name?.charAt(0) }}
-            </span>
+            <span class="text-[#a3e635] font-bold text-sm">{{ auth.user.value?.name?.charAt(0) }}</span>
           </div>
           <div class="min-w-0">
             <p class="text-[#f5f5f5] font-medium text-sm truncate">{{ auth.user.value?.name }}</p>
@@ -39,10 +37,7 @@
       </nav>
 
       <div class="p-4 border-t border-[#1a1a1a]">
-        <button
-          @click="auth.logout()"
-          class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-[#737373] hover:text-red-400 hover:bg-red-500/10 transition-all"
-        >
+        <button @click="auth.logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-[#737373] hover:text-red-400 hover:bg-red-500/10 transition-all">
           <LogOut class="w-4 h-4" />
           Sair
         </button>
@@ -59,27 +54,17 @@
             <h1 class="font-display text-4xl text-white">ALUNOS</h1>
             <p class="text-[#737373] text-sm mt-1">{{ students.length }} cadastrados</p>
           </div>
-          <button
-            @click="openStudentModal()"
-            class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors"
-          >
+          <button @click="openStudentModal()" class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors">
             <UserPlus class="w-4 h-4" />
             Novo Aluno
           </button>
         </div>
-
         <div class="mb-4">
-          <input
-            v-model="searchStudent"
-            placeholder="Buscar por nome ou e-mail..."
-            class="w-full max-w-sm bg-[#141414] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-          />
+          <input v-model="searchStudent" placeholder="Buscar por nome ou e-mail..." class="w-full max-w-sm bg-[#141414] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
         </div>
-
         <div v-if="loadingStudents" class="text-center py-16 text-[#737373]">
           <Loader2 class="w-8 h-8 animate-spin mx-auto mb-4 text-[#a3e635]" />
         </div>
-
         <div v-else class="bg-[#141414] border border-[#262626] rounded-xl overflow-hidden">
           <table class="w-full">
             <thead class="bg-[#1a1a1a]">
@@ -92,20 +77,12 @@
             </thead>
             <tbody class="divide-y divide-[#262626]">
               <tr v-if="filteredStudents.length === 0">
-                <td colspan="4" class="text-center py-10 text-[#737373] text-sm">
-                  Nenhum aluno encontrado.
-                </td>
+                <td colspan="4" class="text-center py-10 text-[#737373] text-sm">Nenhum aluno encontrado.</td>
               </tr>
-              <tr
-                v-for="student in filteredStudents"
-                :key="student.id"
-                class="hover:bg-[#1a1a1a] transition-colors"
-              >
+              <tr v-for="student in filteredStudents" :key="student.id" class="hover:bg-[#1a1a1a] transition-colors">
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-[#a3e635]/10 flex items-center justify-center text-[#a3e635] text-xs font-bold">
-                      {{ student.name.charAt(0) }}
-                    </div>
+                    <div class="w-8 h-8 rounded-full bg-[#a3e635]/10 flex items-center justify-center text-[#a3e635] text-xs font-bold">{{ student.name.charAt(0) }}</div>
                     <span class="text-sm text-[#f5f5f5]">{{ student.name }}</span>
                   </div>
                 </td>
@@ -113,20 +90,9 @@
                 <td class="px-6 py-4 text-sm text-[#737373]">{{ student.phone || "—" }}</td>
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-2">
-                    <button
-                      @click="openStudentModal(student)"
-                      class="text-xs text-[#a3e635] hover:underline"
-                    >
-                      Editar
-                    </button>
+                    <button @click="openStudentModal(student)" class="text-xs text-[#a3e635] hover:underline">Editar</button>
                     <span class="text-[#333]">|</span>
-                    <button
-                      v-if="auth.user.value?.role === 'admin'"
-                      @click="deleteStudent(student.id)"
-                      class="text-xs text-red-400 hover:underline"
-                    >
-                      Remover
-                    </button>
+                    <button v-if="auth.user.value?.role === 'admin'" @click="deleteStudent(student.id)" class="text-xs text-red-400 hover:underline">Remover</button>
                   </div>
                 </td>
               </tr>
@@ -142,79 +108,46 @@
             <h1 class="font-display text-4xl text-white">TREINOS</h1>
             <p class="text-[#737373] text-sm mt-1">{{ adminWorkouts.length }} treinos cadastrados</p>
           </div>
-          <button
-            @click="openWorkoutModal()"
-            class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors"
-          >
+          <button @click="openWorkoutModal()" class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors">
             <Plus class="w-4 h-4" />
             Novo Treino
           </button>
         </div>
-
         <div v-if="loadingAdminWorkouts" class="text-center py-16 text-[#737373]">
           <Loader2 class="w-8 h-8 animate-spin mx-auto mb-4 text-[#a3e635]" />
         </div>
-
         <div v-else class="space-y-4">
-          <div
-            v-for="workout in adminWorkouts"
-            :key="workout.id"
-            class="bg-[#141414] border border-[#262626] rounded-xl p-6"
-          >
+          <div v-for="workout in adminWorkouts" :key="workout.id" class="bg-[#141414] border border-[#262626] rounded-xl p-6">
             <div class="flex items-start justify-between mb-4">
               <div>
                 <h3 class="text-white font-semibold">{{ workout.name }}</h3>
-                <p v-if="workout.muscleGroups" class="text-[#737373] text-xs mt-1">
-                  {{ workout.muscleGroups }}
-                </p>
+                <p v-if="workout.muscleGroups" class="text-[#737373] text-xs mt-1">{{ workout.muscleGroups }}</p>
               </div>
               <div class="flex gap-2">
-                <button
-                  @click="openAssignModal(workout)"
-                  class="text-xs px-3 py-1.5 bg-[#a3e635]/10 text-[#a3e635] border border-[#a3e635]/20 rounded-lg hover:bg-[#a3e635]/20 transition-colors"
-                >
-                  Atribuir
-                </button>
-                <button
-                  @click="deleteAdminWorkout(workout.id)"
-                  class="text-xs px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors"
-                >
-                  Remover
-                </button>
+                <button @click="openAssignModal(workout)" class="text-xs px-3 py-1.5 bg-[#a3e635]/10 text-[#a3e635] border border-[#a3e635]/20 rounded-lg hover:bg-[#a3e635]/20 transition-colors">Atribuir</button>
+                <button @click="deleteAdminWorkout(workout.id)" class="text-xs px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors">Remover</button>
               </div>
             </div>
             <div class="flex flex-wrap gap-2">
-              <span
-                v-for="ex in workout.exercises"
-                :key="ex.id"
-                class="text-xs bg-[#1a1a1a] border border-[#262626] rounded px-2 py-1 text-[#737373]"
-              >
-                {{ ex.name }} {{ ex.sets }}x{{ ex.reps }}
-              </span>
+              <span v-for="ex in workout.exercises" :key="ex.id" class="text-xs bg-[#1a1a1a] border border-[#262626] rounded px-2 py-1 text-[#737373]">{{ ex.name }} {{ ex.sets }}x{{ ex.reps }}</span>
             </div>
           </div>
-          <div v-if="adminWorkouts.length === 0" class="text-center py-16 text-[#737373]">
-            Nenhum treino cadastrado.
-          </div>
+          <div v-if="adminWorkouts.length === 0" class="text-center py-16 text-[#737373]">Nenhum treino cadastrado.</div>
         </div>
       </div>
 
-      <!-- Professores tab (admin only) -->
+      <!-- Professores tab -->
       <div v-if="activeTab === 'professores'">
         <div class="flex items-center justify-between mb-8">
           <div>
             <h1 class="font-display text-4xl text-white">PROFESSORES</h1>
             <p class="text-[#737373] text-sm mt-1">{{ professors.length }} cadastrados</p>
           </div>
-          <button
-            @click="openProfModal()"
-            class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors"
-          >
+          <button @click="openProfModal()" class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors">
             <UserPlus class="w-4 h-4" />
             Novo Professor
           </button>
         </div>
-
         <div class="bg-[#141414] border border-[#262626] rounded-xl overflow-hidden">
           <table class="w-full">
             <thead class="bg-[#1a1a1a]">
@@ -226,24 +159,13 @@
             </thead>
             <tbody class="divide-y divide-[#262626]">
               <tr v-if="professors.length === 0">
-                <td colspan="3" class="text-center py-10 text-[#737373] text-sm">
-                  Nenhum professor cadastrado.
-                </td>
+                <td colspan="3" class="text-center py-10 text-[#737373] text-sm">Nenhum professor cadastrado.</td>
               </tr>
-              <tr
-                v-for="prof in professors"
-                :key="prof.id"
-                class="hover:bg-[#1a1a1a] transition-colors"
-              >
+              <tr v-for="prof in professors" :key="prof.id" class="hover:bg-[#1a1a1a] transition-colors">
                 <td class="px-6 py-4 text-sm text-[#f5f5f5]">{{ prof.name }}</td>
                 <td class="px-6 py-4 text-sm text-[#737373]">{{ prof.email }}</td>
                 <td class="px-6 py-4">
-                  <button
-                    @click="deleteProfessor(prof.id)"
-                    class="text-xs text-red-400 hover:underline"
-                  >
-                    Remover
-                  </button>
+                  <button @click="deleteProfessor(prof.id)" class="text-xs text-red-400 hover:underline">Remover</button>
                 </td>
               </tr>
             </tbody>
@@ -255,44 +177,32 @@
       <div v-if="activeTab === 'financeiro'">
         <div class="flex items-center justify-between mb-8">
           <h1 class="font-display text-4xl text-white">FINANCEIRO</h1>
-          <button
-            @click="showPaymentModal = true"
-            class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors"
-          >
+          <button @click="showPaymentModal = true" class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors">
             <Plus class="w-4 h-4" />
             Gerar Cobrança Pix
           </button>
         </div>
-
-        <!-- Summary -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div class="bg-[#141414] border border-[#262626] rounded-xl p-6">
             <p class="text-[#737373] text-xs uppercase tracking-wider mb-2">Total recebido</p>
-            <p class="font-display text-4xl text-[#a3e635]">
-              R$ {{ totalPaid.toFixed(2).replace(".", ",") }}
-            </p>
+            <p class="font-display text-4xl text-[#a3e635]">R$ {{ totalPaid.toFixed(2).replace(".", ",") }}</p>
           </div>
           <div class="bg-[#141414] border border-[#262626] rounded-xl p-6">
             <p class="text-[#737373] text-xs uppercase tracking-wider mb-2">Pendente</p>
-            <p class="font-display text-4xl text-yellow-400">
-              R$ {{ totalPending.toFixed(2).replace(".", ",") }}
-            </p>
+            <p class="font-display text-4xl text-yellow-400">R$ {{ totalPending.toFixed(2).replace(".", ",") }}</p>
           </div>
           <div class="bg-[#141414] border border-[#262626] rounded-xl p-6">
             <p class="text-[#737373] text-xs uppercase tracking-wider mb-2">Total de cobranças</p>
             <p class="font-display text-4xl text-white">{{ allPayments.length }}</p>
           </div>
         </div>
-
         <div class="bg-[#141414] border border-[#262626] rounded-xl overflow-hidden">
           <div class="p-6 border-b border-[#262626]">
             <h3 class="font-display text-2xl text-white">TODAS AS COBRANÇAS</h3>
           </div>
-
           <div v-if="loadingPayments" class="p-8 text-center">
             <Loader2 class="w-6 h-6 animate-spin mx-auto text-[#a3e635]" />
           </div>
-
           <table v-else class="w-full">
             <thead class="bg-[#1a1a1a]">
               <tr>
@@ -305,40 +215,19 @@
             </thead>
             <tbody class="divide-y divide-[#262626]">
               <tr v-if="allPayments.length === 0">
-                <td colspan="5" class="text-center py-10 text-[#737373] text-sm">
-                  Nenhuma cobrança encontrada.
-                </td>
+                <td colspan="5" class="text-center py-10 text-[#737373] text-sm">Nenhuma cobrança encontrada.</td>
               </tr>
-              <tr
-                v-for="payment in allPayments"
-                :key="payment.id"
-                class="hover:bg-[#1a1a1a] transition-colors"
-              >
+              <tr v-for="payment in allPayments" :key="payment.id" class="hover:bg-[#1a1a1a] transition-colors">
                 <td class="px-6 py-4 text-sm text-[#f5f5f5]">{{ payment.userName || "—" }}</td>
-                <td class="px-6 py-4 text-sm text-[#f5f5f5]">
-                  R$ {{ payment.amount.toFixed(2).replace(".", ",") }}
-                </td>
+                <td class="px-6 py-4 text-sm text-[#f5f5f5]">R$ {{ payment.amount.toFixed(2).replace(".", ",") }}</td>
                 <td class="px-6 py-4 text-sm text-[#737373]">{{ payment.dueDate }}</td>
                 <td class="px-6 py-4">
-                  <span
-                    :class="[
-                      'text-xs px-2 py-1 rounded-full font-medium',
-                      payment.status === 'paid'
-                        ? 'bg-[#a3e635]/10 text-[#a3e635] border border-[#a3e635]/20'
-                        : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
-                    ]"
-                  >
+                  <span :class="['text-xs px-2 py-1 rounded-full font-medium', payment.status === 'paid' ? 'bg-[#a3e635]/10 text-[#a3e635] border border-[#a3e635]/20' : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20']">
                     {{ payment.status === "paid" ? "Pago" : "Pendente" }}
                   </span>
                 </td>
                 <td class="px-6 py-4">
-                  <button
-                    v-if="payment.status === 'pending'"
-                    @click="confirmPayment(payment.id)"
-                    class="text-xs text-[#a3e635] hover:underline"
-                  >
-                    Confirmar
-                  </button>
+                  <button v-if="payment.status === 'pending'" @click="confirmPayment(payment.id)" class="text-xs text-[#a3e635] hover:underline">Confirmar</button>
                   <span v-else class="text-[#555] text-xs">—</span>
                 </td>
               </tr>
@@ -347,30 +236,22 @@
         </div>
       </div>
 
-      <!-- ==================== PACOTES TAB ==================== -->
+      <!-- Pacotes tab -->
       <div v-if="activeTab === 'pacotes'">
         <div class="flex items-center justify-between mb-8">
           <div>
             <h1 class="font-display text-4xl text-white">PACOTES</h1>
             <p class="text-[#737373] text-sm mt-1">{{ packages.length }} pacotes cadastrados</p>
           </div>
-          <button
-            @click="openPackageModal()"
-            class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors"
-          >
+          <button @click="openPackageModal()" class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors">
             <Plus class="w-4 h-4" />
             Novo Pacote
           </button>
         </div>
-
         <div v-if="loadingPackages" class="text-center py-16 text-[#737373]">
           <Loader2 class="w-8 h-8 animate-spin mx-auto mb-4 text-[#a3e635]" />
         </div>
-
-        <div v-else-if="packagesError" class="text-center py-16 text-red-400 text-sm">
-          {{ packagesError }}
-        </div>
-
+        <div v-else-if="packagesError" class="text-center py-16 text-red-400 text-sm">{{ packagesError }}</div>
         <div v-else class="bg-[#141414] border border-[#262626] rounded-xl overflow-hidden">
           <table class="w-full">
             <thead class="bg-[#1a1a1a]">
@@ -386,62 +267,28 @@
             </thead>
             <tbody class="divide-y divide-[#262626]">
               <tr v-if="packages.length === 0">
-                <td colspan="7" class="text-center py-10 text-[#737373] text-sm">
-                  Nenhum pacote cadastrado.
-                </td>
+                <td colspan="7" class="text-center py-10 text-[#737373] text-sm">Nenhum pacote cadastrado.</td>
               </tr>
-              <tr
-                v-for="pkg in packages"
-                :key="pkg.id"
-                class="hover:bg-[#1a1a1a] transition-colors"
-              >
+              <tr v-for="pkg in packages" :key="pkg.id" class="hover:bg-[#1a1a1a] transition-colors">
                 <td class="px-6 py-4 text-sm text-[#f5f5f5] font-medium">{{ pkg.name }}</td>
                 <td class="px-6 py-4 text-sm text-[#737373] max-w-[180px] truncate">{{ pkg.subtitle || "—" }}</td>
-                <td class="px-6 py-4 text-sm text-[#f5f5f5]">
-                  R$ {{ Number(pkg.price).toFixed(2).replace(".", ",") }}
-                </td>
+                <td class="px-6 py-4 text-sm text-[#f5f5f5]">R$ {{ Number(pkg.price).toFixed(2).replace(".", ",") }}</td>
                 <td class="px-6 py-4">
-                  <button
-                    @click="togglePackageField(pkg, 'is_featured')"
-                    :class="[
-                      'text-xs px-2 py-1 rounded-full font-medium border transition-colors',
-                      pkg.is_featured
-                        ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20'
-                        : 'bg-[#1a1a1a] text-[#555] border-[#333] hover:border-[#555]'
-                    ]"
-                  >
+                  <button @click="togglePackageField(pkg, 'is_featured')" :class="['text-xs px-2 py-1 rounded-full font-medium border transition-colors', pkg.is_featured ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20' : 'bg-[#1a1a1a] text-[#555] border-[#333] hover:border-[#555]']">
                     {{ pkg.is_featured ? "Destaque" : "Normal" }}
                   </button>
                 </td>
                 <td class="px-6 py-4">
-                  <button
-                    @click="togglePackageField(pkg, 'is_active')"
-                    :class="[
-                      'text-xs px-2 py-1 rounded-full font-medium border transition-colors',
-                      pkg.is_active
-                        ? 'bg-[#a3e635]/10 text-[#a3e635] border-[#a3e635]/20 hover:bg-[#a3e635]/20'
-                        : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'
-                    ]"
-                  >
+                  <button @click="togglePackageField(pkg, 'is_active')" :class="['text-xs px-2 py-1 rounded-full font-medium border transition-colors', pkg.is_active ? 'bg-[#a3e635]/10 text-[#a3e635] border-[#a3e635]/20 hover:bg-[#a3e635]/20' : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20']">
                     {{ pkg.is_active ? "Ativo" : "Inativo" }}
                   </button>
                 </td>
                 <td class="px-6 py-4 text-sm text-[#737373]">{{ pkg.display_order }}</td>
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-2">
-                    <button
-                      @click="openPackageModal(pkg)"
-                      class="text-xs text-[#a3e635] hover:underline"
-                    >
-                      Editar
-                    </button>
+                    <button @click="openPackageModal(pkg)" class="text-xs text-[#a3e635] hover:underline">Editar</button>
                     <span class="text-[#333]">|</span>
-                    <button
-                      @click="deletePackage(pkg.id)"
-                      class="text-xs text-red-400 hover:underline"
-                    >
-                      Remover
-                    </button>
+                    <button @click="deletePackage(pkg.id)" class="text-xs text-red-400 hover:underline">Remover</button>
                   </div>
                 </td>
               </tr>
@@ -450,30 +297,22 @@
         </div>
       </div>
 
-      <!-- ==================== SLIDES TAB ==================== -->
+      <!-- Slides tab -->
       <div v-if="activeTab === 'slides'">
         <div class="flex items-center justify-between mb-8">
           <div>
             <h1 class="font-display text-4xl text-white">SLIDES</h1>
             <p class="text-[#737373] text-sm mt-1">{{ sliderImages.length }} slides cadastrados</p>
           </div>
-          <button
-            @click="openSlideModal()"
-            class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors"
-          >
+          <button @click="openSlideModal()" class="flex items-center gap-2 px-4 py-2 bg-[#a3e635] text-[#0d0d0d] rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors">
             <Plus class="w-4 h-4" />
             Novo Slide
           </button>
         </div>
-
         <div v-if="loadingSlides" class="text-center py-16 text-[#737373]">
           <Loader2 class="w-8 h-8 animate-spin mx-auto mb-4 text-[#a3e635]" />
         </div>
-
-        <div v-else-if="slidesError" class="text-center py-16 text-red-400 text-sm">
-          {{ slidesError }}
-        </div>
-
+        <div v-else-if="slidesError" class="text-center py-16 text-red-400 text-sm">{{ slidesError }}</div>
         <div v-else class="bg-[#141414] border border-[#262626] rounded-xl overflow-hidden">
           <table class="w-full">
             <thead class="bg-[#1a1a1a]">
@@ -488,71 +327,32 @@
             </thead>
             <tbody class="divide-y divide-[#262626]">
               <tr v-if="sliderImages.length === 0">
-                <td colspan="6" class="text-center py-10 text-[#737373] text-sm">
-                  Nenhum slide cadastrado.
-                </td>
+                <td colspan="6" class="text-center py-10 text-[#737373] text-sm">Nenhum slide cadastrado.</td>
               </tr>
-              <tr
-                v-for="slide in sliderImages"
-                :key="slide.id"
-                class="hover:bg-[#1a1a1a] transition-colors"
-              >
+              <tr v-for="slide in sliderImages" :key="slide.id" class="hover:bg-[#1a1a1a] transition-colors">
                 <td class="px-6 py-4">
                   <div class="w-20 h-12 rounded-lg overflow-hidden bg-[#262626] flex items-center justify-center border border-[#333]">
-                    <img
-                      v-if="slide.image_url"
-                      :src="slide.image_url"
-                      :alt="slide.alt_text || 'slide'"
-                      class="w-full h-full object-cover"
-                      @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
-                    />
+                    <img v-if="slide.image_url" :src="slide.image_url" :alt="slide.alt_text || 'slide'" class="w-full h-full object-cover" @error="(e: Event) => (e.target as HTMLImageElement).style.display = 'none'" />
                     <ImageIcon v-else class="w-5 h-5 text-[#555]" />
                   </div>
                 </td>
-                <td class="px-6 py-4 text-sm text-[#737373] max-w-[200px] truncate">
-                  {{ slide.alt_text || "—" }}
-                </td>
+                <td class="px-6 py-4 text-sm text-[#737373] max-w-[200px] truncate">{{ slide.alt_text || "—" }}</td>
                 <td class="px-6 py-4">
-                  <span
-                    :class="[
-                      'text-xs px-2 py-1 rounded-full font-medium border',
-                      slide.mobile_image_url
-                        ? 'bg-[#a3e635]/10 text-[#a3e635] border-[#a3e635]/20'
-                        : 'bg-[#1a1a1a] text-[#555] border-[#333]'
-                    ]"
-                  >
+                  <span :class="['text-xs px-2 py-1 rounded-full font-medium border', slide.mobile_image_url ? 'bg-[#a3e635]/10 text-[#a3e635] border-[#a3e635]/20' : 'bg-[#1a1a1a] text-[#555] border-[#333]']">
                     {{ slide.mobile_image_url ? "Sim" : "Não" }}
                   </span>
                 </td>
                 <td class="px-6 py-4 text-sm text-[#737373]">{{ slide.display_order }}</td>
                 <td class="px-6 py-4">
-                  <button
-                    @click="toggleSlideActive(slide)"
-                    :class="[
-                      'text-xs px-2 py-1 rounded-full font-medium border transition-colors',
-                      slide.is_active
-                        ? 'bg-[#a3e635]/10 text-[#a3e635] border-[#a3e635]/20 hover:bg-[#a3e635]/20'
-                        : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'
-                    ]"
-                  >
+                  <button @click="toggleSlideActive(slide)" :class="['text-xs px-2 py-1 rounded-full font-medium border transition-colors', slide.is_active ? 'bg-[#a3e635]/10 text-[#a3e635] border-[#a3e635]/20 hover:bg-[#a3e635]/20' : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20']">
                     {{ slide.is_active ? "Ativo" : "Inativo" }}
                   </button>
                 </td>
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-2">
-                    <button
-                      @click="openSlideModal(slide)"
-                      class="text-xs text-[#a3e635] hover:underline"
-                    >
-                      Editar
-                    </button>
+                    <button @click="openSlideModal(slide)" class="text-xs text-[#a3e635] hover:underline">Editar</button>
                     <span class="text-[#333]">|</span>
-                    <button
-                      @click="deleteSlide(slide.id)"
-                      class="text-xs text-red-400 hover:underline"
-                    >
-                      Remover
-                    </button>
+                    <button @click="deleteSlide(slide.id)" class="text-xs text-red-400 hover:underline">Remover</button>
                   </div>
                 </td>
               </tr>
@@ -565,65 +365,29 @@
 
     <!-- Student Modal -->
     <Teleport to="body">
-      <div
-        v-if="showStudentModal"
-        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-        @click.self="showStudentModal = false"
-      >
+      <div v-if="showStudentModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" @click.self="showStudentModal = false">
         <div class="bg-[#141414] border border-[#262626] rounded-xl p-8 max-w-md w-full">
-          <h3 class="font-display text-2xl text-white mb-6">
-            {{ editingStudent ? "EDITAR ALUNO" : "NOVO ALUNO" }}
-          </h3>
+          <h3 class="font-display text-2xl text-white mb-6">{{ editingStudent ? "EDITAR ALUNO" : "NOVO ALUNO" }}</h3>
           <form @submit.prevent="saveStudent" class="space-y-4">
             <div>
               <label class="block text-sm text-[#f5f5f5] mb-2">Nome</label>
-              <input
-                v-model="studentForm.name"
-                required
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              />
+              <input v-model="studentForm.name" required class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
             </div>
             <div>
               <label class="block text-sm text-[#f5f5f5] mb-2">E-mail</label>
-              <input
-                v-model="studentForm.email"
-                type="email"
-                required
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              />
+              <input v-model="studentForm.email" type="email" required class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
             </div>
             <div v-if="!editingStudent">
               <label class="block text-sm text-[#f5f5f5] mb-2">Senha</label>
-              <input
-                v-model="studentForm.password"
-                type="password"
-                required
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              />
+              <input v-model="studentForm.password" type="password" required class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
             </div>
             <div>
               <label class="block text-sm text-[#f5f5f5] mb-2">Telefone</label>
-              <input
-                v-model="studentForm.phone"
-                type="tel"
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              />
+              <input v-model="studentForm.phone" type="tel" class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
             </div>
             <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="showStudentModal = false"
-                class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm hover:border-[#333] transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="savingStudent"
-                class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60"
-              >
-                {{ savingStudent ? "Salvando..." : "Salvar" }}
-              </button>
+              <button type="button" @click="showStudentModal = false" class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm hover:border-[#333] transition-colors">Cancelar</button>
+              <button type="submit" :disabled="savingStudent" class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60">{{ savingStudent ? "Salvando..." : "Salvar" }}</button>
             </div>
           </form>
         </div>
@@ -632,93 +396,35 @@
 
     <!-- Workout Modal -->
     <Teleport to="body">
-      <div
-        v-if="showWorkoutModal"
-        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-        @click.self="showWorkoutModal = false"
-      >
+      <div v-if="showWorkoutModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" @click.self="showWorkoutModal = false">
         <div class="bg-[#141414] border border-[#262626] rounded-xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
           <h3 class="font-display text-2xl text-white mb-6">NOVO TREINO</h3>
           <form @submit.prevent="saveWorkout" class="space-y-4">
             <div>
               <label class="block text-sm text-[#f5f5f5] mb-2">Nome</label>
-              <input
-                v-model="workoutForm.name"
-                required
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              />
+              <input v-model="workoutForm.name" required class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
             </div>
             <div>
               <label class="block text-sm text-[#f5f5f5] mb-2">Grupos musculares</label>
-              <input
-                v-model="workoutForm.muscleGroups"
-                placeholder="Ex: Peito, Tríceps"
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              />
+              <input v-model="workoutForm.muscleGroups" placeholder="Ex: Peito, Tríceps" class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
             </div>
             <div>
               <div class="flex items-center justify-between mb-3">
                 <label class="text-sm text-[#f5f5f5]">Exercícios</label>
-                <button
-                  type="button"
-                  @click="workoutForm.exercises.push({ name: '', sets: 3, reps: '12' })"
-                  class="text-xs text-[#a3e635] hover:underline"
-                >
-                  + Adicionar
-                </button>
+                <button type="button" @click="workoutForm.exercises.push({ name: '', sets: 3, reps: '12' })" class="text-xs text-[#a3e635] hover:underline">+ Adicionar</button>
               </div>
               <div class="space-y-3">
-                <div
-                  v-for="(ex, i) in workoutForm.exercises"
-                  :key="i"
-                  class="grid grid-cols-3 gap-2 bg-[#1a1a1a] p-3 rounded-lg"
-                >
-                  <input
-                    v-model="ex.name"
-                    placeholder="Exercício"
-                    required
-                    class="col-span-3 bg-[#262626] border border-[#333] rounded px-3 py-2 text-[#f5f5f5] text-xs outline-none focus:border-[#a3e635]"
-                  />
-                  <input
-                    v-model.number="ex.sets"
-                    placeholder="Séries"
-                    type="number"
-                    min="1"
-                    required
-                    class="bg-[#262626] border border-[#333] rounded px-3 py-2 text-[#f5f5f5] text-xs outline-none focus:border-[#a3e635]"
-                  />
-                  <input
-                    v-model="ex.reps"
-                    placeholder="Reps"
-                    required
-                    class="bg-[#262626] border border-[#333] rounded px-3 py-2 text-[#f5f5f5] text-xs outline-none focus:border-[#a3e635]"
-                  />
-                  <button
-                    v-if="workoutForm.exercises.length > 1"
-                    type="button"
-                    @click="workoutForm.exercises.splice(i, 1)"
-                    class="text-red-400 text-xs hover:underline"
-                  >
-                    Remover
-                  </button>
+                <div v-for="(ex, i) in workoutForm.exercises" :key="i" class="grid grid-cols-3 gap-2 bg-[#1a1a1a] p-3 rounded-lg">
+                  <input v-model="ex.name" placeholder="Exercício" required class="col-span-3 bg-[#262626] border border-[#333] rounded px-3 py-2 text-[#f5f5f5] text-xs outline-none focus:border-[#a3e635]" />
+                  <input v-model.number="ex.sets" placeholder="Séries" type="number" min="1" required class="bg-[#262626] border border-[#333] rounded px-3 py-2 text-[#f5f5f5] text-xs outline-none focus:border-[#a3e635]" />
+                  <input v-model="ex.reps" placeholder="Reps" required class="bg-[#262626] border border-[#333] rounded px-3 py-2 text-[#f5f5f5] text-xs outline-none focus:border-[#a3e635]" />
+                  <button v-if="workoutForm.exercises.length > 1" type="button" @click="workoutForm.exercises.splice(i, 1)" class="text-red-400 text-xs hover:underline">Remover</button>
                 </div>
               </div>
             </div>
             <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="showWorkoutModal = false"
-                class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="savingWorkout"
-                class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60"
-              >
-                {{ savingWorkout ? "Salvando..." : "Criar Treino" }}
-              </button>
+              <button type="button" @click="showWorkoutModal = false" class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm">Cancelar</button>
+              <button type="submit" :disabled="savingWorkout" class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60">{{ savingWorkout ? "Salvando..." : "Criar Treino" }}</button>
             </div>
           </form>
         </div>
@@ -727,42 +433,20 @@
 
     <!-- Assign Modal -->
     <Teleport to="body">
-      <div
-        v-if="showAssignModal"
-        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-        @click.self="showAssignModal = false"
-      >
+      <div v-if="showAssignModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" @click.self="showAssignModal = false">
         <div class="bg-[#141414] border border-[#262626] rounded-xl p-8 max-w-md w-full">
           <h3 class="font-display text-2xl text-white mb-2">ATRIBUIR TREINO</h3>
           <p class="text-[#737373] text-sm mb-6">{{ assigningWorkout?.name }}</p>
           <div class="space-y-2 max-h-64 overflow-y-auto mb-6">
-            <label
-              v-for="student in students"
-              :key="student.id"
-              class="flex items-center gap-3 p-3 bg-[#1a1a1a] rounded-lg cursor-pointer hover:bg-[#262626] transition-colors"
-            >
-              <input
-                type="checkbox"
-                :value="student.id"
-                v-model="selectedStudentIds"
-                class="accent-[#a3e635]"
-              />
+            <label v-for="student in students" :key="student.id" class="flex items-center gap-3 p-3 bg-[#1a1a1a] rounded-lg cursor-pointer hover:bg-[#262626] transition-colors">
+              <input type="checkbox" :value="student.id" v-model="selectedStudentIds" class="accent-[#a3e635]" />
               <span class="text-sm text-[#f5f5f5]">{{ student.name }}</span>
               <span class="text-xs text-[#737373] ml-auto">{{ student.email }}</span>
             </label>
           </div>
           <div class="flex gap-3">
-            <button
-              @click="showAssignModal = false"
-              class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm"
-            >
-              Cancelar
-            </button>
-            <button
-              @click="assignWorkout"
-              :disabled="selectedStudentIds.length === 0 || assigning"
-              class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60"
-            >
+            <button @click="showAssignModal = false" class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm">Cancelar</button>
+            <button @click="assignWorkout" :disabled="selectedStudentIds.length === 0 || assigning" class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60">
               {{ assigning ? "Atribuindo..." : `Atribuir (${selectedStudentIds.length})` }}
             </button>
           </div>
@@ -772,297 +456,166 @@
 
     <!-- Payment Modal -->
     <Teleport to="body">
-      <div
-        v-if="showPaymentModal"
-        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-        @click.self="showPaymentModal = false"
-      >
+      <div v-if="showPaymentModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" @click.self="showPaymentModal = false">
         <div class="bg-[#141414] border border-[#262626] rounded-xl p-8 max-w-md w-full">
           <h3 class="font-display text-2xl text-white mb-6">GERAR COBRANÇA PIX</h3>
           <form @submit.prevent="generatePayment" class="space-y-4">
             <div>
               <label class="block text-sm text-[#f5f5f5] mb-2">Aluno</label>
-              <select
-                v-model="paymentForm.userId"
-                required
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              >
+              <select v-model="paymentForm.userId" required class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors">
                 <option value="">Selecione um aluno</option>
                 <option v-for="s in students" :key="s.id" :value="s.id">{{ s.name }}</option>
               </select>
             </div>
             <div>
               <label class="block text-sm text-[#f5f5f5] mb-2">Valor (R$)</label>
-              <input
-                v-model.number="paymentForm.amount"
-                type="number"
-                min="1"
-                step="0.01"
-                required
-                placeholder="99.90"
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              />
+              <input v-model.number="paymentForm.amount" type="number" min="1" step="0.01" required placeholder="99.90" class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
             </div>
             <div>
               <label class="block text-sm text-[#f5f5f5] mb-2">Data de vencimento</label>
-              <input
-                v-model="paymentForm.dueDate"
-                type="date"
-                required
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              />
+              <input v-model="paymentForm.dueDate" type="date" required class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
             </div>
             <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="showPaymentModal = false"
-                class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="savingPayment"
-                class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60"
-              >
-                {{ savingPayment ? "Gerando..." : "Gerar Cobrança" }}
-              </button>
+              <button type="button" @click="showPaymentModal = false" class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm">Cancelar</button>
+              <button type="submit" :disabled="savingPayment" class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60">{{ savingPayment ? "Gerando..." : "Gerar Cobrança" }}</button>
             </div>
           </form>
         </div>
       </div>
     </Teleport>
 
-    <!-- ==================== PACKAGE MODAL ==================== -->
+    <!-- Package Modal -->
     <Teleport to="body">
-      <div
-        v-if="showPackageModal"
-        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-        @click.self="showPackageModal = false"
-      >
+      <div v-if="showPackageModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" @click.self="showPackageModal = false">
         <div class="bg-[#141414] border border-[#262626] rounded-xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
-          <h3 class="font-display text-2xl text-white mb-6">
-            {{ editingPackage ? "EDITAR PACOTE" : "NOVO PACOTE" }}
-          </h3>
+          <h3 class="font-display text-2xl text-white mb-6">{{ editingPackage ? "EDITAR PACOTE" : "NOVO PACOTE" }}</h3>
           <form @submit.prevent="savePackage" class="space-y-4">
             <div>
               <label class="block text-sm text-[#f5f5f5] mb-2">Nome</label>
-              <input
-                v-model="packageForm.name"
-                required
-                placeholder="Ex: Plano Premium"
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              />
+              <input v-model="packageForm.name" required placeholder="Ex: Plano Premium" class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
             </div>
             <div>
               <label class="block text-sm text-[#f5f5f5] mb-2">Subtítulo</label>
-              <input
-                v-model="packageForm.subtitle"
-                placeholder="Ex: Acesso completo à academia"
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              />
+              <input v-model="packageForm.subtitle" placeholder="Ex: Acesso completo à academia" class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
             </div>
             <div>
               <label class="block text-sm text-[#f5f5f5] mb-2">Preço (R$)</label>
-              <input
-                v-model.number="packageForm.price"
-                type="number"
-                min="0"
-                step="0.01"
-                required
-                placeholder="99.90"
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              />
+              <input v-model.number="packageForm.price" type="number" min="0" step="0.01" required placeholder="99.90" class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
             </div>
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm text-[#f5f5f5] mb-2">Ordem de exibição</label>
-                <input
-                  v-model.number="packageForm.display_order"
-                  type="number"
-                  min="0"
-                  class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-                />
+                <input v-model.number="packageForm.display_order" type="number" min="0" class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
               </div>
               <div class="flex flex-col gap-3 pt-6">
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    v-model="packageForm.is_featured"
-                    class="accent-[#a3e635] w-4 h-4"
-                  />
+                  <input type="checkbox" v-model="packageForm.is_featured" class="accent-[#a3e635] w-4 h-4" />
                   <span class="text-sm text-[#f5f5f5]">Destaque</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    v-model="packageForm.is_active"
-                    class="accent-[#a3e635] w-4 h-4"
-                  />
+                  <input type="checkbox" v-model="packageForm.is_active" class="accent-[#a3e635] w-4 h-4" />
                   <span class="text-sm text-[#f5f5f5]">Ativo</span>
                 </label>
               </div>
             </div>
-
-            <!-- Features dinâmicas -->
             <div>
               <div class="flex items-center justify-between mb-3">
                 <label class="text-sm text-[#f5f5f5]">Funcionalidades</label>
-                <button
-                  type="button"
-                  @click="packageForm.features.push('')"
-                  class="text-xs text-[#a3e635] hover:underline"
-                >
-                  + Adicionar item
-                </button>
+                <button type="button" @click="packageForm.features.push('')" class="text-xs text-[#a3e635] hover:underline">+ Adicionar item</button>
               </div>
               <div class="space-y-2">
-                <div
-                  v-if="packageForm.features.length === 0"
-                  class="text-xs text-[#555] text-center py-3 border border-dashed border-[#333] rounded-lg"
-                >
-                  Nenhuma funcionalidade adicionada
-                </div>
-                <div
-                  v-for="(feat, i) in packageForm.features"
-                  :key="i"
-                  class="flex items-center gap-2"
-                >
-                  <input
-                    v-model="packageForm.features[i]"
-                    :placeholder="`Funcionalidade ${i + 1}`"
-                    class="flex-1 bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-2 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-                  />
-                  <button
-                    type="button"
-                    @click="packageForm.features.splice(i, 1)"
-                    class="text-red-400 hover:text-red-300 transition-colors p-1"
-                  >
-                    <X class="w-4 h-4" />
-                  </button>
+                <div v-if="packageForm.features.length === 0" class="text-xs text-[#555] text-center py-3 border border-dashed border-[#333] rounded-lg">Nenhuma funcionalidade adicionada</div>
+                <div v-for="(feat, i) in packageForm.features" :key="i" class="flex items-center gap-2">
+                  <input v-model="packageForm.features[i]" :placeholder="`Funcionalidade ${i + 1}`" class="flex-1 bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-2 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
+                  <button type="button" @click="packageForm.features.splice(i, 1)" class="text-red-400 hover:text-red-300 transition-colors p-1"><X class="w-4 h-4" /></button>
                 </div>
               </div>
             </div>
-
             <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="showPackageModal = false"
-                class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm hover:border-[#333] transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="savingPackage"
-                class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60"
-              >
-                {{ savingPackage ? "Salvando..." : "Salvar" }}
-              </button>
+              <button type="button" @click="showPackageModal = false" class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm hover:border-[#333] transition-colors">Cancelar</button>
+              <button type="submit" :disabled="savingPackage" class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60">{{ savingPackage ? "Salvando..." : "Salvar" }}</button>
             </div>
           </form>
         </div>
       </div>
     </Teleport>
 
-    <!-- ==================== SLIDE MODAL ==================== -->
+    <!-- ==================== SLIDE MODAL (file upload) ==================== -->
     <Teleport to="body">
-      <div
-        v-if="showSlideModal"
-        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-        @click.self="showSlideModal = false"
-      >
+      <div v-if="showSlideModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" @click.self="showSlideModal = false">
         <div class="bg-[#141414] border border-[#262626] rounded-xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
-          <h3 class="font-display text-2xl text-white mb-6">
-            {{ editingSlide ? "EDITAR SLIDE" : "NOVO SLIDE" }}
-          </h3>
+          <h3 class="font-display text-2xl text-white mb-6">{{ editingSlide ? "EDITAR SLIDE" : "NOVO SLIDE" }}</h3>
           <form @submit.prevent="saveSlide" class="space-y-4">
+
+            <!-- Imagem desktop -->
             <div>
-              <label class="block text-sm text-[#f5f5f5] mb-2">URL da imagem (desktop)</label>
+              <label class="block text-sm text-[#f5f5f5] mb-2">
+                Imagem desktop
+                <span v-if="editingSlide" class="text-[#555]">— deixe em branco para manter a atual</span>
+              </label>
               <input
-                v-model="slideForm.image_url"
-                required
-                placeholder="https://..."
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
+                ref="desktopFileInput"
+                type="file"
+                accept="image/*"
+                @change="onDesktopFileChange"
+                :required="!editingSlide"
+                class="w-full text-sm text-[#737373] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-[#a3e635] file:text-[#0d0d0d] hover:file:bg-[#bef264] file:cursor-pointer bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-2 outline-none focus:border-[#a3e635] transition-colors"
               />
-              <!-- Preview desktop -->
-              <div
-                v-if="slideForm.image_url"
-                class="mt-2 w-full h-32 rounded-lg overflow-hidden bg-[#1a1a1a] border border-[#262626] flex items-center justify-center"
-              >
-                <img
-                  :src="slideForm.image_url"
-                  alt="preview desktop"
-                  class="w-full h-full object-cover"
-                  @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
-                />
+              <div v-if="slideForm.desktopPreview" class="mt-2 w-full h-32 rounded-lg overflow-hidden bg-[#1a1a1a] border border-[#262626]">
+                <img :src="slideForm.desktopPreview" alt="preview desktop" class="w-full h-full object-cover" />
+              </div>
+              <div v-else-if="editingSlide?.image_url" class="mt-2">
+                <p class="text-xs text-[#555] mb-1">Imagem atual:</p>
+                <div class="w-full h-32 rounded-lg overflow-hidden bg-[#1a1a1a] border border-[#262626]">
+                  <img :src="editingSlide.image_url" alt="imagem atual" class="w-full h-full object-cover" />
+                </div>
               </div>
             </div>
+
+            <!-- Imagem mobile -->
             <div>
-              <label class="block text-sm text-[#f5f5f5] mb-2">URL da imagem (mobile) <span class="text-[#555]">opcional</span></label>
+              <label class="block text-sm text-[#f5f5f5] mb-2">
+                Imagem mobile <span class="text-[#555]">opcional</span>
+              </label>
               <input
-                v-model="slideForm.mobile_image_url"
-                placeholder="https://..."
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
+                ref="mobileFileInput"
+                type="file"
+                accept="image/*"
+                @change="onMobileFileChange"
+                class="w-full text-sm text-[#737373] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-[#a3e635] file:text-[#0d0d0d] hover:file:bg-[#bef264] file:cursor-pointer bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-2 outline-none focus:border-[#a3e635] transition-colors"
               />
-              <!-- Preview mobile -->
-              <div
-                v-if="slideForm.mobile_image_url"
-                class="mt-2 w-24 h-32 rounded-lg overflow-hidden bg-[#1a1a1a] border border-[#262626] flex items-center justify-center"
-              >
-                <img
-                  :src="slideForm.mobile_image_url"
-                  alt="preview mobile"
-                  class="w-full h-full object-cover"
-                  @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
-                />
+              <div v-if="slideForm.mobilePreview" class="mt-2 w-24 h-32 rounded-lg overflow-hidden bg-[#1a1a1a] border border-[#262626]">
+                <img :src="slideForm.mobilePreview" alt="preview mobile" class="w-full h-full object-cover" />
+              </div>
+              <div v-else-if="editingSlide?.mobile_image_url" class="mt-2">
+                <p class="text-xs text-[#555] mb-1">Imagem mobile atual:</p>
+                <div class="w-24 h-32 rounded-lg overflow-hidden bg-[#1a1a1a] border border-[#262626]">
+                  <img :src="editingSlide.mobile_image_url" alt="mobile atual" class="w-full h-full object-cover" />
+                </div>
               </div>
             </div>
+
             <div>
               <label class="block text-sm text-[#f5f5f5] mb-2">Texto alternativo (alt)</label>
-              <input
-                v-model="slideForm.alt_text"
-                placeholder="Descrição da imagem para acessibilidade"
-                class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-              />
+              <input v-model="slideForm.alt_text" placeholder="Descrição da imagem para acessibilidade" class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
             </div>
+
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm text-[#f5f5f5] mb-2">Ordem de exibição</label>
-                <input
-                  v-model.number="slideForm.display_order"
-                  type="number"
-                  min="0"
-                  class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors"
-                />
+                <input v-model.number="slideForm.display_order" type="number" min="0" class="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-4 py-3 text-[#f5f5f5] text-sm outline-none focus:border-[#a3e635] transition-colors" />
               </div>
               <div class="flex items-end pb-3">
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    v-model="slideForm.is_active"
-                    class="accent-[#a3e635] w-4 h-4"
-                  />
+                  <input type="checkbox" v-model="slideForm.is_active" class="accent-[#a3e635] w-4 h-4" />
                   <span class="text-sm text-[#f5f5f5]">Ativo</span>
                 </label>
               </div>
             </div>
 
             <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="showSlideModal = false"
-                class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm hover:border-[#333] transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="savingSlide"
-                class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60"
-              >
-                {{ savingSlide ? "Salvando..." : "Salvar" }}
-              </button>
+              <button type="button" @click="showSlideModal = false" class="flex-1 border border-[#262626] text-[#f5f5f5] py-3 rounded-lg text-sm hover:border-[#333] transition-colors">Cancelar</button>
+              <button type="submit" :disabled="savingSlide" class="flex-1 bg-[#a3e635] text-[#0d0d0d] py-3 rounded-lg text-sm font-bold hover:bg-[#bef264] transition-colors disabled:opacity-60">{{ savingSlide ? "Salvando..." : "Salvar" }}</button>
             </div>
           </form>
         </div>
@@ -1117,16 +670,12 @@ const filteredStudents = computed(() =>
 
 const fetchStudents = async () => {
   loadingStudents.value = true;
-  try {
-    students.value = await api.get<User[]>("/users?role=aluno");
-  } catch {}
+  try { students.value = await api.get<User[]>("/users?role=aluno"); } catch {}
   loadingStudents.value = false;
 };
 
 const fetchProfessors = async () => {
-  try {
-    professors.value = await api.get<User[]>("/users?role=professor");
-  } catch {}
+  try { professors.value = await api.get<User[]>("/users?role=professor"); } catch {}
 };
 
 const openStudentModal = (student?: User) => {
@@ -1146,21 +695,11 @@ const saveStudent = async () => {
   savingStudent.value = true;
   try {
     if (editingStudent.value) {
-      const updated = await api.put<User>(`/users/${editingStudent.value.id}`, {
-        name: studentForm.name,
-        email: studentForm.email,
-        phone: studentForm.phone || undefined,
-      });
+      const updated = await api.put<User>(`/users/${editingStudent.value.id}`, { name: studentForm.name, email: studentForm.email, phone: studentForm.phone || undefined });
       const idx = students.value.findIndex((s) => s.id === updated.id);
       if (idx !== -1) students.value[idx] = updated;
     } else {
-      const created = await api.post<User>("/users", {
-        name: studentForm.name,
-        email: studentForm.email,
-        password: studentForm.password,
-        role: "aluno",
-        phone: studentForm.phone || undefined,
-      });
+      const created = await api.post<User>("/users", { name: studentForm.name, email: studentForm.email, password: studentForm.password, role: "aluno", phone: studentForm.phone || undefined });
       students.value.unshift(created);
     }
     showStudentModal.value = false;
@@ -1170,10 +709,7 @@ const saveStudent = async () => {
 
 const deleteStudent = async (id: string) => {
   if (!confirm("Remover este aluno?")) return;
-  try {
-    await api.del(`/users/${id}`);
-    students.value = students.value.filter((s) => s.id !== id);
-  } catch {}
+  try { await api.del(`/users/${id}`); students.value = students.value.filter((s) => s.id !== id); } catch {}
 };
 
 const openProfModal = () => {
@@ -1184,10 +720,7 @@ const openProfModal = () => {
 
 const deleteProfessor = async (id: string) => {
   if (!confirm("Remover este professor?")) return;
-  try {
-    await api.del(`/users/${id}`);
-    professors.value = professors.value.filter((p) => p.id !== id);
-  } catch {}
+  try { await api.del(`/users/${id}`); professors.value = professors.value.filter((p) => p.id !== id); } catch {}
 };
 
 // --- Treinos ---
@@ -1195,12 +728,7 @@ const adminWorkouts = ref<Workout[]>([]);
 const loadingAdminWorkouts = ref(true);
 const showWorkoutModal = ref(false);
 const savingWorkout = ref(false);
-const workoutForm = reactive({
-  name: "",
-  muscleGroups: "",
-  exercises: [{ name: "", sets: 3, reps: "12" }],
-});
-
+const workoutForm = reactive({ name: "", muscleGroups: "", exercises: [{ name: "", sets: 3, reps: "12" }] });
 const showAssignModal = ref(false);
 const assigningWorkout = ref<Workout | null>(null);
 const selectedStudentIds = ref<string[]>([]);
@@ -1208,30 +736,19 @@ const assigning = ref(false);
 
 const fetchAdminWorkouts = async () => {
   loadingAdminWorkouts.value = true;
-  try {
-    adminWorkouts.value = await api.get<Workout[]>("/workouts");
-  } catch {}
+  try { adminWorkouts.value = await api.get<Workout[]>("/workouts"); } catch {}
   loadingAdminWorkouts.value = false;
 };
 
 const openWorkoutModal = () => {
-  Object.assign(workoutForm, {
-    name: "",
-    muscleGroups: "",
-    exercises: [{ name: "", sets: 3, reps: "12" }],
-  });
+  Object.assign(workoutForm, { name: "", muscleGroups: "", exercises: [{ name: "", sets: 3, reps: "12" }] });
   showWorkoutModal.value = true;
 };
 
 const saveWorkout = async () => {
   savingWorkout.value = true;
   try {
-    const created = await api.post<Workout>("/workouts", {
-      name: workoutForm.name,
-      muscleGroups: workoutForm.muscleGroups || undefined,
-      isCustom: false,
-      exercises: workoutForm.exercises,
-    });
+    const created = await api.post<Workout>("/workouts", { name: workoutForm.name, muscleGroups: workoutForm.muscleGroups || undefined, isCustom: false, exercises: workoutForm.exercises });
     adminWorkouts.value.unshift(created);
     showWorkoutModal.value = false;
   } catch {}
@@ -1240,10 +757,7 @@ const saveWorkout = async () => {
 
 const deleteAdminWorkout = async (id: string) => {
   if (!confirm("Remover este treino?")) return;
-  try {
-    await api.del(`/workouts/${id}`);
-    adminWorkouts.value = adminWorkouts.value.filter((w) => w.id !== id);
-  } catch {}
+  try { await api.del(`/workouts/${id}`); adminWorkouts.value = adminWorkouts.value.filter((w) => w.id !== id); } catch {}
 };
 
 const openAssignModal = (workout: Workout) => {
@@ -1255,12 +769,7 @@ const openAssignModal = (workout: Workout) => {
 const assignWorkout = async () => {
   if (!assigningWorkout.value) return;
   assigning.value = true;
-  try {
-    await api.post(`/workouts/${assigningWorkout.value.id}/assign`, {
-      userIds: selectedStudentIds.value,
-    });
-    showAssignModal.value = false;
-  } catch {}
+  try { await api.post(`/workouts/${assigningWorkout.value.id}/assign`, { userIds: selectedStudentIds.value }); showAssignModal.value = false; } catch {}
   assigning.value = false;
 };
 
@@ -1271,30 +780,19 @@ const showPaymentModal = ref(false);
 const savingPayment = ref(false);
 const paymentForm = reactive({ userId: "", amount: 0, dueDate: "" });
 
-const totalPaid = computed(() =>
-  allPayments.value.filter((p) => p.status === "paid").reduce((sum, p) => sum + p.amount, 0),
-);
-
-const totalPending = computed(() =>
-  allPayments.value.filter((p) => p.status === "pending").reduce((sum, p) => sum + p.amount, 0),
-);
+const totalPaid = computed(() => allPayments.value.filter((p) => p.status === "paid").reduce((sum, p) => sum + p.amount, 0));
+const totalPending = computed(() => allPayments.value.filter((p) => p.status === "pending").reduce((sum, p) => sum + p.amount, 0));
 
 const fetchAllPayments = async () => {
   loadingPayments.value = true;
-  try {
-    allPayments.value = await api.get<Payment[]>("/payments");
-  } catch {}
+  try { allPayments.value = await api.get<Payment[]>("/payments"); } catch {}
   loadingPayments.value = false;
 };
 
 const generatePayment = async () => {
   savingPayment.value = true;
   try {
-    const payment = await api.post<Payment>("/payments/generate", {
-      userId: paymentForm.userId,
-      amount: paymentForm.amount,
-      dueDate: paymentForm.dueDate,
-    });
+    const payment = await api.post<Payment>("/payments/generate", { userId: paymentForm.userId, amount: paymentForm.amount, dueDate: paymentForm.dueDate });
     allPayments.value.unshift(payment);
     showPaymentModal.value = false;
     Object.assign(paymentForm, { userId: "", amount: 0, dueDate: "" });
@@ -1328,24 +826,12 @@ const packagesError = ref("");
 const showPackageModal = ref(false);
 const editingPackage = ref<PackageItem | null>(null);
 const savingPackage = ref(false);
-const packageForm = reactive({
-  name: "",
-  subtitle: "",
-  price: 0,
-  is_featured: false,
-  is_active: true,
-  display_order: 0,
-  features: [] as string[],
-});
+const packageForm = reactive({ name: "", subtitle: "", price: 0, is_featured: false, is_active: true, display_order: 0, features: [] as string[] });
 
 const fetchPackages = async () => {
   loadingPackages.value = true;
   packagesError.value = "";
-  try {
-    packages.value = await api.get<PackageItem[]>("/packages/all");
-  } catch (e: any) {
-    packagesError.value = e?.message || "Erro ao carregar pacotes.";
-  }
+  try { packages.value = await api.get<PackageItem[]>("/packages/all"); } catch (e: any) { packagesError.value = e?.message || "Erro ao carregar pacotes."; }
   loadingPackages.value = false;
 };
 
@@ -1360,15 +846,7 @@ const openPackageModal = (pkg?: PackageItem) => {
     packageForm.display_order = pkg.display_order;
     packageForm.features = [...(pkg.features ?? [])];
   } else {
-    Object.assign(packageForm, {
-      name: "",
-      subtitle: "",
-      price: 0,
-      is_featured: false,
-      is_active: true,
-      display_order: 0,
-      features: [],
-    });
+    Object.assign(packageForm, { name: "", subtitle: "", price: 0, is_featured: false, is_active: true, display_order: 0, features: [] });
   }
   showPackageModal.value = true;
 };
@@ -1376,15 +854,7 @@ const openPackageModal = (pkg?: PackageItem) => {
 const savePackage = async () => {
   savingPackage.value = true;
   try {
-    const payload = {
-      name: packageForm.name,
-      subtitle: packageForm.subtitle || undefined,
-      price: packageForm.price,
-      is_featured: packageForm.is_featured,
-      is_active: packageForm.is_active,
-      display_order: packageForm.display_order,
-      features: packageForm.features.filter((f) => f.trim() !== ""),
-    };
+    const payload = { name: packageForm.name, subtitle: packageForm.subtitle || undefined, price: packageForm.price, is_featured: packageForm.is_featured, is_active: packageForm.is_active, display_order: packageForm.display_order, features: packageForm.features.filter((f) => f.trim() !== "") };
     if (editingPackage.value) {
       const updated = await api.put<PackageItem>(`/packages/${editingPackage.value.id}`, payload);
       const idx = packages.value.findIndex((p) => p.id === updated.id);
@@ -1400,20 +870,13 @@ const savePackage = async () => {
 
 const deletePackage = async (id: string) => {
   if (!confirm("Remover este pacote?")) return;
-  try {
-    await api.del(`/packages/${id}`);
-    packages.value = packages.value.filter((p) => p.id !== id);
-  } catch {}
+  try { await api.del(`/packages/${id}`); packages.value = packages.value.filter((p) => p.id !== id); } catch {}
 };
 
 const togglePackageField = async (pkg: PackageItem, field: "is_active" | "is_featured") => {
   const original = pkg[field];
   pkg[field] = !original;
-  try {
-    await api.put(`/packages/${pkg.id}`, { [field]: pkg[field] });
-  } catch {
-    pkg[field] = original;
-  }
+  try { await api.put(`/packages/${pkg.id}`, { [field]: pkg[field] }); } catch { pkg[field] = original; }
 };
 
 // --- Slides ---
@@ -1432,61 +895,79 @@ const slidesError = ref("");
 const showSlideModal = ref(false);
 const editingSlide = ref<SliderImage | null>(null);
 const savingSlide = ref(false);
+
+const desktopFileInput = ref<HTMLInputElement | null>(null);
+const mobileFileInput = ref<HTMLInputElement | null>(null);
+
 const slideForm = reactive({
-  image_url: "",
-  mobile_image_url: "",
+  desktopFile: null as File | null,
+  mobileFile: null as File | null,
+  desktopPreview: "",
+  mobilePreview: "",
   alt_text: "",
   display_order: 0,
   is_active: true,
 });
 
+const onDesktopFileChange = (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+  if (slideForm.desktopPreview) URL.revokeObjectURL(slideForm.desktopPreview);
+  slideForm.desktopFile = file;
+  slideForm.desktopPreview = URL.createObjectURL(file);
+};
+
+const onMobileFileChange = (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+  if (slideForm.mobilePreview) URL.revokeObjectURL(slideForm.mobilePreview);
+  slideForm.mobileFile = file;
+  slideForm.mobilePreview = URL.createObjectURL(file);
+};
+
 const fetchSlides = async () => {
   loadingSlides.value = true;
   slidesError.value = "";
-  try {
-    sliderImages.value = await api.get<SliderImage[]>("/slider-images/all");
-  } catch (e: any) {
-    slidesError.value = e?.message || "Erro ao carregar slides.";
-  }
+  try { sliderImages.value = await api.get<SliderImage[]>("/slider-images/all"); } catch (e: any) { slidesError.value = e?.message || "Erro ao carregar slides."; }
   loadingSlides.value = false;
 };
 
 const openSlideModal = (slide?: SliderImage) => {
   editingSlide.value = slide || null;
-  if (slide) {
-    slideForm.image_url = slide.image_url;
-    slideForm.mobile_image_url = slide.mobile_image_url ?? "";
-    slideForm.alt_text = slide.alt_text ?? "";
-    slideForm.display_order = slide.display_order;
-    slideForm.is_active = slide.is_active;
-  } else {
-    Object.assign(slideForm, {
-      image_url: "",
-      mobile_image_url: "",
-      alt_text: "",
-      display_order: 0,
-      is_active: true,
-    });
-  }
+  if (slideForm.desktopPreview) URL.revokeObjectURL(slideForm.desktopPreview);
+  if (slideForm.mobilePreview) URL.revokeObjectURL(slideForm.mobilePreview);
+  Object.assign(slideForm, {
+    desktopFile: null,
+    mobileFile: null,
+    desktopPreview: "",
+    mobilePreview: "",
+    alt_text: slide?.alt_text ?? "",
+    display_order: slide?.display_order ?? 0,
+    is_active: slide?.is_active ?? true,
+  });
+  nextTick(() => {
+    if (desktopFileInput.value) desktopFileInput.value.value = "";
+    if (mobileFileInput.value) mobileFileInput.value.value = "";
+  });
   showSlideModal.value = true;
 };
 
 const saveSlide = async () => {
   savingSlide.value = true;
   try {
-    const payload = {
-      image_url: slideForm.image_url,
-      mobile_image_url: slideForm.mobile_image_url || undefined,
-      alt_text: slideForm.alt_text || undefined,
-      display_order: slideForm.display_order,
-      is_active: slideForm.is_active,
-    };
+    const formData = new FormData();
+    if (slideForm.desktopFile) formData.append("image", slideForm.desktopFile);
+    if (slideForm.mobileFile) formData.append("mobile_image", slideForm.mobileFile);
+    if (slideForm.alt_text) formData.append("alt_text", slideForm.alt_text);
+    formData.append("display_order", String(slideForm.display_order));
+    formData.append("is_active", String(slideForm.is_active));
+
     if (editingSlide.value) {
-      const updated = await api.put<SliderImage>(`/slider-images/${editingSlide.value.id}`, payload);
+      const updated = await $fetch<SliderImage>(`/api/slider-images/${editingSlide.value.id}`, { method: "PUT", body: formData });
       const idx = sliderImages.value.findIndex((s) => s.id === updated.id);
       if (idx !== -1) sliderImages.value[idx] = updated;
     } else {
-      const created = await api.post<SliderImage>("/slider-images", payload);
+      const created = await $fetch<SliderImage>("/api/slider-images", { method: "POST", body: formData });
       sliderImages.value.push(created);
     }
     showSlideModal.value = false;
@@ -1496,32 +977,21 @@ const saveSlide = async () => {
 
 const deleteSlide = async (id: string) => {
   if (!confirm("Remover este slide?")) return;
-  try {
-    await api.del(`/slider-images/${id}`);
-    sliderImages.value = sliderImages.value.filter((s) => s.id !== id);
-  } catch {}
+  try { await api.del(`/slider-images/${id}`); sliderImages.value = sliderImages.value.filter((s) => s.id !== id); } catch {}
 };
 
 const toggleSlideActive = async (slide: SliderImage) => {
   const original = slide.is_active;
   slide.is_active = !original;
-  try {
-    await api.put(`/slider-images/${slide.id}`, { is_active: slide.is_active });
-  } catch {
-    slide.is_active = original;
-  }
+  try { await api.put(`/slider-images/${slide.id}`, { is_active: slide.is_active }); } catch { slide.is_active = original; }
 };
 
 // --- Watch tabs ---
 watch(activeTab, async (tab) => {
   if (tab === "alunos" && students.value.length === 0) await fetchStudents();
-  if (tab === "treinos" && adminWorkouts.value.length === 0) {
-    await Promise.all([fetchAdminWorkouts(), fetchStudents()]);
-  }
+  if (tab === "treinos" && adminWorkouts.value.length === 0) await Promise.all([fetchAdminWorkouts(), fetchStudents()]);
   if (tab === "professores" && professors.value.length === 0) await fetchProfessors();
-  if (tab === "financeiro" && allPayments.value.length === 0) {
-    await Promise.all([fetchAllPayments(), fetchStudents()]);
-  }
+  if (tab === "financeiro" && allPayments.value.length === 0) await Promise.all([fetchAllPayments(), fetchStudents()]);
   if (tab === "pacotes" && packages.value.length === 0) await fetchPackages();
   if (tab === "slides" && sliderImages.value.length === 0) await fetchSlides();
 });

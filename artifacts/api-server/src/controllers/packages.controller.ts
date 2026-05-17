@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { packagesService } from "../services/packages.service.js";
 import { AuthRequest } from "../middlewares/auth.js";
+import { getParam } from "../lib/request-param.js";
 
 const createSchema = z.object({
   name: z.string().min(1),
@@ -57,7 +58,7 @@ export const packagesController = {
   },
 
   async update(req: AuthRequest, res: Response, next: NextFunction) {
-    const { id } = req.params;
+    const id = getParam(req.params.id);
     const parse = updateSchema.safeParse(req.body);
     if (!parse.success) {
       res.status(400).json({ error: true, message: parse.error.message });
@@ -72,7 +73,7 @@ export const packagesController = {
   },
 
   async remove(req: AuthRequest, res: Response, next: NextFunction) {
-    const { id } = req.params;
+    const id = getParam(req.params.id);
     try {
       await packagesService.remove(id);
       res.json({ success: true, message: "Pacote removido" });

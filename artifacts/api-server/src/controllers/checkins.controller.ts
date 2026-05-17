@@ -4,13 +4,17 @@ import { checkinsService } from "../services/checkins.service.js";
 import { AppError } from "../lib/app-error.js";
 import { AuthRequest } from "../middlewares/auth.js";
 
+interface UploadRequest extends AuthRequest {
+  file?: Express.Multer.File;
+}
+
 const createSchema = z.object({
   title: z.string().min(1, "Título é obrigatório").max(255),
   duration_minutes: z.coerce.number().int().positive("Duração deve ser positiva"),
 });
 
 export const checkinsController = {
-  async create(req: AuthRequest, res: Response, next: NextFunction) {
+  async create(req: UploadRequest, res: Response, next: NextFunction) {
     const parse = createSchema.safeParse(req.body);
     if (!parse.success) {
       res.status(400).json({ error: true, message: parse.error.message });
