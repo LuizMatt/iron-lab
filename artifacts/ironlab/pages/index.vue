@@ -46,6 +46,67 @@
       </div>
     </section>
 
+    <!-- Carrossel de Slides -->
+    <section v-if="!slidesLoading && slides.length > 0" class="pb-16 px-6">
+      <div class="mx-auto max-w-6xl">
+        <div class="relative overflow-hidden rounded-2xl border border-[#262626]">
+          <!-- Slide atual -->
+          <div class="relative w-full" style="aspect-ratio: 3/1;">
+            <img
+              v-for="(slide, index) in slides"
+              :key="slide.id"
+              :src="currentSlide === index && isMobile && slide.mobile_image_url
+                ? slide.mobile_image_url
+                : slide.image_url"
+              :alt="slide.alt_text"
+              :class="[
+                'absolute inset-0 w-full h-full object-cover transition-opacity duration-500',
+                currentSlide === index ? 'opacity-100' : 'opacity-0'
+              ]"
+            />
+          </div>
+
+          <!-- Botão anterior -->
+          <button
+            v-if="slides.length > 1"
+            @click="prevSlide"
+            class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0d0d0d]/70 border border-[#262626] flex items-center justify-center text-white hover:border-[#a3e635]/50 transition-colors"
+          >
+            ‹
+          </button>
+
+          <!-- Botão próximo -->
+          <button
+            v-if="slides.length > 1"
+            @click="nextSlide"
+            class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0d0d0d]/70 border border-[#262626] flex items-center justify-center text-white hover:border-[#a3e635]/50 transition-colors"
+          >
+            ›
+          </button>
+
+          <!-- Indicadores -->
+          <div v-if="slides.length > 1" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            <button
+              v-for="(_, index) in slides"
+              :key="index"
+              @click="currentSlide = index"
+              :class="[
+                'w-2 h-2 rounded-full transition-all',
+                currentSlide === index ? 'bg-[#a3e635] w-6' : 'bg-white/40'
+              ]"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skeleton loading do carrossel -->
+    <section v-if="slidesLoading" class="pb-16 px-6">
+      <div class="mx-auto max-w-6xl">
+        <div class="rounded-2xl border border-[#262626] bg-[#141414] animate-pulse" style="aspect-ratio: 3/1;" />
+      </div>
+    </section>
+
     <!-- Features -->
     <section class="py-24 px-6 border-t border-[#1a1a1a]">
       <div class="mx-auto max-w-6xl">
@@ -164,28 +225,107 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { Dumbbell, TrendingUp, CreditCard, CheckCircle2 } from "lucide-vue-next";
 
 const api = useApi();
 
+// --- Carrossel ---
+interface Slide {
+  id: string;
+  image_url: string;
+  mobile_image_url: string | null;
+  alt_text: string;
+  display_order: number;
+  is_active: boolean;
+}
+
+const slides = ref<Slide[]>([]);
+const slidesLoading = ref(true);
+const currentSlide = ref(0);
+const isMobile = ref(false);
+
+function nextSlide() {
+  currentSlide.value = (currentSlide.value + 1) % slides.value.length;
+}
+function prevSlide() {
+  currentSlide.value = (currentSlide.value - 1 + slides.value.length) % slides.value.length;
+}
+
+let autoplayInterval: ReturnType<typeof setInterval> | null = null;
+
+function startAutoplay() {
+  if (slides.value.length > 1) {
+    autoplayInterval = setInterval(nextSlide, 5000);
+  }
+}
+
+function checkMobile() {
+  isMobile.value = window.innerWidth < 768;
+}
+
+// --- Pacotes ---
+interface Package {
+  id: string;
+  name: string;
+  subtitle: string;
+  price: number;
+  features: string[];
+  is_featured: boolean;
+  is_active: boolean;
+  display_order: number;
+}
+
+const packages = ref<Package[]>([]);
+const loadingPackages = ref(true);
+const activePackages = computed(() =>
+  packages.value
+    .filter((p) => p.is_active)
+    .sort((a, b) => a.display_order - b.display_order)
+);
+
+onMounted(async () => {
+  checkMobile();
+  window.addEventListener("resize", checkMobile);
+
+  // Busca slides e pacotes em paralelo
+  await Promise.allSettled([
+    $fetch<Slide[]>("/api/slider-images")
+      .then((data) => {
+        slides.value = data;
+        startAutoplay();
+      })
+      .catch(() => { slides.value = []; })
+      .finally(() => { slidesLoading.value = false; }),
+
+    api.get<Package[]>("/packages")
+      .then((data) => { packages.value = data; })
+      .catch(() => { packages.value = []; })
+      .finally(() => { loadingPackages.value = false; }),
+  ]);
+});
+
+onUnmounted(() => {
+  if (autoplayInterval) clearInterval(autoplayInterval);
+  window.removeEventListener("resize", checkMobile);
+});
+
+// --- Conteúdo fixo ---
 const features = [
   {
     icon: Dumbbell,
     title: "EQUIPAMENTOS ELITE",
-    description:
-      "Máquinas de última geração e área de peso livre completa para todos os níveis de treinamento.",
+    description: "Máquinas de última geração e área de peso livre completa para todos os níveis de treinamento.",
   },
   {
     icon: TrendingUp,
     title: "ACOMPANHAMENTO REAL",
-    description:
-      "Streak diário, histórico de treinos e metas personalizadas pelo seu professor.",
+    description: "Streak diário, histórico de treinos e metas personalizadas pelo seu professor.",
   },
   {
     icon: CreditCard,
     title: "PAGAMENTO VIA PIX",
-    description:
-      "Geração automática de cobranças Pix com QR Code. Rápido, sem burocrecia.",
+    description: "Geração automática de cobranças Pix com QR Code. Rápido, sem burocracia.",
   },
 ];
 
@@ -195,20 +335,4 @@ const stats = [
   { value: "98%", label: "Satisfação" },
   { value: "24h", label: "Suporte online" },
 ];
-
-const packages = ref<Package[]>([]);
-const loadingPackages = ref(true);
-
-const activePackages = computed(() =>
-  packages.value
-    .filter((p) => p.is_active)
-    .sort((a, b) => a.display_order - b.display_order),
-);
-
-onMounted(async () => {
-  try {
-    packages.value = await api.get<Package[]>("/packages");
-  } catch {}
-  loadingPackages.value = false;
-});
 </script>
